@@ -1,4 +1,4 @@
-import Navbar from './components/layout/Navbar';
+import Navbar from './components/layout/Navbar/Navbar';
 import styles from './App.module.css';
 
 function App() {
@@ -6,12 +6,10 @@ function App() {
     <div className={styles.appContainer}>
       <Navbar />
       
-      <main className={styles.main}>
+      <main className={styles.mainContent}>
         <h1 className={styles.title}>TELÉFONOS</h1>
-        {/* Aquí es donde "uniremos" los productos después */}
+        {/* Aquí conectaremos el resto de los componentes */}
       </main>
-
-      {/* El Footer lo crearemos luego */}
     </div>
   );
 }
