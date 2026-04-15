@@ -1,0 +1,104 @@
+/* 1. Definimos el movimiento de las luces */
+@keyframes moveBlue {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(15%, 10%); }
+  100% { transform: translate(0, 0); }
+}
+
+@keyframes moveWhite {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(-10%, -5%); }
+  100% { transform: translate(0, 0); }
+}
+
+.appWrapper {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden; 
+  background-color: #0B0E14; /* Fondo base sólido */
+}
+
+/* Capa de Brillo Azul (Superior Izquierda) */
+.appWrapper::before {
+  content: '';
+  position: absolute;
+  width: 150%; /* Más grande para que no se vea el borde al moverse */
+  height: 150%;
+  top: -25%;
+  left: -25%;
+  background: radial-gradient(circle at 20% 20%, #0048ff9f 0%, transparent 40%);
+  filter: blur(120px);
+  pointer-events: none;
+  animation: moveBlue 15s ease-in-out infinite; /* Movimiento lento */
+}
+
+/* Capa de Brillo Blanco (Inferior Derecha) */
+.appWrapper::after {
+  content: '';
+  position: absolute;
+  width: 150%;
+  height: 150%;
+  bottom: -25%;
+  right: -25%;
+  background: radial-gradient(circle at 80% 80%, #ffffff62 0%, transparent 35%);
+  filter: blur(100px);
+  pointer-events: none;
+  animation: moveWhite 20s ease-in-out infinite; /* Un poco más lento que la azul */
+}
+
+/* src/App.module.css */
+
+.content {
+  flex: 1;
+  padding: 0% 3%;       /* Esto controla qué tan lejos del borde está el título */
+  max-width: 1200px;
+  margin: 0 auto;      /* Centra el contenedor, pero el texto adentro irá a la izquierda */
+  position: relative;
+  z-index: 10;
+  width: 100%;         /* Asegura que ocupe todo el ancho disponible */
+}
+
+.mainTitle {
+  font-size: clamp(3rem, 8vw, 5rem);
+  font-weight: 900;
+  font-style: italic;
+  color: #FFFFFF;
+  
+  /* EL CAMBIO CLAVE: */
+  text-align: left;    /* De center a left */
+  
+  text-transform: uppercase;
+  letter-spacing: -3px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  
+  /* Un pequeño padding-left si quieres ajustarlo milimétricamente */
+  padding-left: 10px; 
+  
+  text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.productGrid {
+flex: 1;
+  display: grid;
+  /* 'auto-fill' crea tantas columnas como quepan de mínimo 280px */
+  /* '1fr' asegura que todas las columnas midan exactamente lo mismo */
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+  gap: 15px; /* Espaciado uniforme horizontal y vertical */
+  align-items: start; /* Evita que las cards se estiren verticalmente si una es más alta */
+  width: 100%;
+  padding-bottom: 40px; /* Espacio extra al final para que no quede tan pegado al borde inferior */
+}
+
+
+.storeLayout {
+  display: flex;
+  flex-direction: row; /* Los pone en horizontal */
+  align-items: flex-start; /* Alinea los Filtros al tope superior */
+  gap: 30px; /* El espacio entre el sidebar y las cards */
+  width: 100%;
+  margin-top: 20px;
+}

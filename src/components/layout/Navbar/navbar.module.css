@@ -1,0 +1,94 @@
+.navContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 2rem;
+  background: rgba(255, 255, 255, 0.03); /* Fondo muy sutil */
+  backdrop-filter: blur(15px); /* El efecto de vidrio */
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Borde fino para dar forma */
+  border-radius: 100px;
+  margin: 20px auto;
+  width: 90%;
+  max-width: 1100px;
+  position: sticky;
+  top: 20px;
+  z-index: 1000;
+}
+
+.logoWrapper {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  height: 60px;
+  width: auto;
+}
+
+.menuLinks {
+  display: flex;
+  list-style: none;
+  gap: 2.5rem;
+}
+
+.menuLinks a {
+  color: #999;
+  text-decoration: none;
+  font-size: .9rem;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  transition: all 0.3s ease;
+}
+
+.menuLinks a:hover {
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.navIcons {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.iconBtn {
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.3s, transform 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.iconBtn:hover {
+  opacity: 1;
+  transform: scale(1.1);
+  color: #0047FF; /* Tu azul de acento */
+}
+
+.cartWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.cartBadge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background-color: #ff3b3b; /* Rojo Apple */
+  color: white;
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 50%;
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid #000; /* Para que resalte en el fondo oscuro */
+}
