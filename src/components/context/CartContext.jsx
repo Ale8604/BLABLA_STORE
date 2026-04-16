@@ -4,8 +4,14 @@ const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
-  // Función para agregar productos
+  // 1. Función para abrir/cerrar el modal
+  const toggleCart = () => {
+    setIsCartOpen(!isCartOpen);
+  };
+
+  // 2. Función para añadir productos (o sumar cantidad)
   const addToCart = (product) => {
     setCart((prevCart) => {
       const isItemInCart = prevCart.find((item) => item.id === product.id);
@@ -18,11 +24,44 @@ export const CartProvider = ({ children }) => {
     });
   };
 
-  // Función para contar items totales (lo que irá en el círculo rojo del Navbar)
+  // 3. Función para restar cantidad o eliminar si llega a 0
+  const removeFromCart = (productId) => {
+    setCart((prevCart) =>
+      prevCart.reduce((acc, item) => {
+        if (item.id === productId) {
+          if (item.quantity > 1) {
+            acc.push({ ...item, quantity: item.quantity - 1 });
+          }
+          // Si la cantidad es 1, no se hace push y desaparece del carrito
+        } else {
+          acc.push(item);
+        }
+        return acc;
+      }, [])
+    );
+  };
+
+  // 4. Cálculos automáticos
   const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
+  
+  const totalPrice = cart.reduce((total, item) => {
+    // Limpiamos el precio de comas y símbolos para la operación matemática
+    const priceValue = parseFloat(item.price.replace(/[^0-9.-]+/g, ""));
+    return total + (priceValue * item.quantity);
+  }, 0);
 
   return (
-    <CartContext.Provider value={{ cart, addToCart, cartCount }}>
+    <CartContext.Provider 
+      value={{ 
+        cart, 
+        addToCart, 
+        removeFromCart, 
+        cartCount, 
+        isCartOpen, 
+        toggleCart, 
+        totalPrice 
+      }}
+    >
       {children}
     </CartContext.Provider>
   );

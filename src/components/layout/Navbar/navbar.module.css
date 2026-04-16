@@ -79,7 +79,7 @@
   position: absolute;
   top: -10px;
   right: -10px;
-  background-color: #ff3b3b; /* Rojo Apple */
+  background-color: #ff3b3bb1; /* Rojo Apple */
   color: white;
   font-size: 0.7rem;
   font-weight: bold;
@@ -90,5 +90,5 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 2px solid #000; /* Para que resalte en el fondo oscuro */
+  /*border: 1px solid #ffffff;  Para que resalte en el fondo oscuro */
 }

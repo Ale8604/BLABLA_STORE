@@ -5,7 +5,7 @@ import styles from './navbar.module.css';
 import { useCart } from '../../context/CartContext'; // Ajusta la ruta si es necesario
 
 const Navbar = () => {
-  const { cartCount } = useCart(); // Obtenemos el número de elementos en el carrito
+  const { cartCount, toggleCart } = useCart(); // Obtenemos el número de elementos en el carrito
 
   return (
     <nav className={styles.navContainer}>
@@ -21,7 +21,7 @@ const Navbar = () => {
       </ul>
 
 <div className={styles.navIcons}>
-  <button className={styles.iconBtn}>
+ <button className={styles.iconBtn} onClick={toggleCart}>
     <div className={styles.cartWrapper}> {/* Nuevo contenedor */}
       <FaShoppingCart size={25} />
       {cartCount > 0 && (
