@@ -50,6 +50,10 @@ export const CartProvider = ({ children }) => {
     return total + (priceValue * item.quantity);
   }, 0);
 
+  const clearCart = () => {
+  setCart([]); // Esto reinicia el estado a un arreglo vacío
+};
+
   return (
     <CartContext.Provider 
       value={{ 
@@ -59,7 +63,8 @@ export const CartProvider = ({ children }) => {
         cartCount, 
         isCartOpen, 
         toggleCart, 
-        totalPrice 
+        totalPrice, 
+        clearCart
       }}
     >
       {children}

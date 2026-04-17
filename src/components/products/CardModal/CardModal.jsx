@@ -22,11 +22,20 @@ const CardModal = () => {
     setIsOrderSent(true);
     if (clearCart) clearCart(); // Limpiamos el carrito en el contexto
   };
+  
+
+    const handleFinishAndClear = () => {
+    clearCart();           // 1. Vacía el carrito (esto pondrá el contador en 0)
+    setIsOrderSent(false); // 2. Quita el aviso de "Gracias"
+    toggleCart();          // 3. Cierra el modal
+    setTimeout(() => setIsOrderSent(false), 500);
+    };
 
   const handleClose = () => {
     toggleCart();
     setTimeout(() => setIsOrderSent(false), 500);
   };
+
 
   if (!isCartOpen) return null;
 
@@ -37,9 +46,9 @@ const CardModal = () => {
           <motion.div 
             className={styles.modal} 
             onClick={(e) => e.stopPropagation()}
-            initial={{ y: -20, opacity: 0, scale: 0.95 }}
+            initial={{ y: -20, opacity: 0, scale: .9 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
-            exit={{ y: -20, opacity: 0, scale: 0.95 }}
+            exit={{ y: -20, opacity: 0, scale: 9 }}
           >
             <h2 className={styles.title}>CARRITO</h2>
 
@@ -48,7 +57,7 @@ const CardModal = () => {
                 <FaCheckCircle size={60} className={styles.successIcon} />
                 <h3>¡Gracias por tu pedido!</h3>
                 <p>Tu solicitud ha sido enviada con éxito.</p>
-                <button className={styles.orderBtn} onClick={handleClose}>Continuar navegando</button>
+                <button className={styles.orderBtn} onClick={handleFinishAndClear}>Continuar navegando</button>
               </motion.div>
             ) : cart.length === 0 ? (
               <div className={styles.emptyCart}>
