@@ -50,20 +50,25 @@ export const CartProvider = ({ children }) => {
     return total + (priceValue * item.quantity);
   }, 0);
 
+  const deleteFromCart = (productId) => {
+    setCart(prev => prev.filter(item => item.id !== productId));
+  };
+
   const clearCart = () => {
-  setCart([]); // Esto reinicia el estado a un arreglo vacío
-};
+    setCart([]);
+  };
 
   return (
     <CartContext.Provider 
-      value={{ 
-        cart, 
-        addToCart, 
-        removeFromCart, 
-        cartCount, 
-        isCartOpen, 
-        toggleCart, 
-        totalPrice, 
+      value={{
+        cart,
+        addToCart,
+        removeFromCart,
+        deleteFromCart,
+        cartCount,
+        isCartOpen,
+        toggleCart,
+        totalPrice,
         clearCart
       }}
     >

@@ -1,26 +1,37 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
+import { useAuth } from '../../context/AuthContext';
 import styles from './CardModal.module.css';
-import { FaPlus, FaMinus, FaShoppingBag, FaCheckCircle } from 'react-icons/fa';
+import { FaPlus, FaMinus, FaShoppingBag, FaCheckCircle, FaTimes, FaUserCircle } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const CardModal = () => {
-  const { cart, isCartOpen, toggleCart, totalPrice, addToCart, removeFromCart, clearCart } = useCart();
-  const [isOrderSent, setIsOrderSent] = useState(false);
+  const { cart, isCartOpen, toggleCart, totalPrice, addToCart, removeFromCart, deleteFromCart, clearCart } = useCart();
+  const { user } = useAuth();
+  const [isOrderSent, setIsOrderSent]   = useState(false);
+  const [showAuthPopup, setShowAuthPopup] = useState(false);
 
-  const handleSendOrder = () => {
-    if (cart.length === 0) return;
-
+  const sendOrder = () => {
     const message = cart.map(item => `• ${item.name} (x${item.quantity}) - $${item.price}`).join('\n');
     const totalText = `\n\n*Total a pagar: $${totalPrice.toLocaleString()}*`;
     const header = `¡Hola! Me gustaría realizar el siguiente pedido en *BlaBla Store*:\n\n`;
     const encodedMessage = encodeURIComponent(header + message + totalText);
-    const phoneNumber = import.meta.env.VITE_WHATSAPP_NUMBER; 
-
+    const phoneNumber = import.meta.env.VITE_WHATSAPP_NUMBER;
     window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
-
     setIsOrderSent(true);
-    if (clearCart) clearCart(); // Limpiamos el carrito en el contexto
+    if (clearCart) clearCart();
+  };
+
+  const handleSendOrder = () => {
+    if (cart.length === 0) return;
+    if (!user) { setShowAuthPopup(true); return; }
+    sendOrder();
+  };
+
+  const handleProceedAnyway = () => {
+    setShowAuthPopup(false);
+    sendOrder();
   };
   
 
@@ -37,20 +48,31 @@ const CardModal = () => {
   };
 
 
-  if (!isCartOpen) return null;
-
   return (
     <AnimatePresence>
       {isCartOpen && (
-        <motion.div className={styles.overlay} onClick={handleClose} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-          <motion.div 
-            className={styles.modal} 
+        <motion.div
+          className={styles.overlay}
+          onClick={handleClose}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.25, ease: 'easeInOut' }}
+        >
+          <motion.div
+            className={styles.modal}
             onClick={(e) => e.stopPropagation()}
-            initial={{ y: -20, opacity: 0, scale: .9 }}
+            initial={{ y: -16, opacity: 0, scale: 0.95 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
-            exit={{ y: -20, opacity: 0, scale: 9 }}
+            exit={{ y: -16, opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
           >
-            <h2 className={styles.title}>CARRITO</h2>
+            <div className={styles.modalHeader}>
+              <h2 className={styles.title}>CARRITO</h2>
+              <button className={styles.closeBtn} onClick={handleClose} aria-label="Cerrar carrito">
+                <FaTimes size={16} />
+              </button>
+            </div>
 
             {isOrderSent ? (
               <motion.div className={styles.successState} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
@@ -80,6 +102,9 @@ const CardModal = () => {
                         <span>{item.quantity}</span>
                         <button className={styles.qtyBtn} onClick={() => removeFromCart(item.id)}><FaMinus size={10}/></button>
                       </div>
+                      <button className={styles.deleteBtn} onClick={() => deleteFromCart(item.id)} aria-label="Eliminar producto">
+                        <FaTimes size={11} />
+                      </button>
                     </div>
                   ))}
                 </div>
@@ -92,6 +117,35 @@ const CardModal = () => {
                 </div>
               </>
             )}
+
+            <AnimatePresence>
+              {showAuthPopup && (
+                <motion.div
+                  className={styles.authOverlay}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <motion.div
+                    className={styles.authPopup}
+                    initial={{ scale: 0.92, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.92, opacity: 0 }}
+                    transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+                  >
+                    <FaUserCircle size={38} className={styles.authIcon} />
+                    <h3 className={styles.authTitle}>¡Sé parte de nuestro equipo!</h3>
+                    <p className={styles.authText}>Los miembros registrados pueden acceder a descuentos y promociones exclusivas.</p>
+                    <div className={styles.authActions}>
+                      <Link to="/registro" className={styles.authBtnPrimary} onClick={toggleCart}>Unirse</Link>
+                      <button className={styles.authBtnDanger} onClick={handleProceedAnyway}>Realizar pedido</button>
+                    </div>
+                    <button className={styles.authDismiss} onClick={() => setShowAuthPopup(false)}>Volver al carrito</button>
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         </motion.div>
       )}

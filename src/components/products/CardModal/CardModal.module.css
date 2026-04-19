@@ -21,15 +21,42 @@
   padding: 25px;
   color: white;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  position: relative;
   display: flex;
   flex-direction: column;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 25px;
 }
 
 .title {
   font-size: 1.2rem;
   font-weight: 700;
-  margin-bottom: 25px;
   letter-spacing: 1px;
+}
+
+.closeBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.closeBtn:hover {
+  background: rgba(255, 80, 80, 0.18);
+  border-color: rgba(255, 80, 80, 0.4);
+  color: #ff6b6b;
 }
 
 .cartItem {
@@ -148,6 +175,121 @@
   color: white; border: none; border-radius: 25px;
   font-weight: bold; cursor: pointer;
 }
+
+.deleteBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  margin-left: 8px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.deleteBtn:hover {
+  background: rgba(255, 80, 80, 0.18);
+  border-color: rgba(255, 80, 80, 0.4);
+  color: #ff6b6b;
+}
+
+/* ── Auth popup overlay (inside modal) ── */
+.authOverlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  background: rgba(11, 14, 20, 0.82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.authPopup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 28px;
+  text-align: center;
+  gap: 10px;
+}
+
+.authIcon { color: #5b7cfa; margin-bottom: 4px; }
+
+.authTitle {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 0;
+  letter-spacing: 0.2px;
+}
+
+.authText {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0 0 6px;
+}
+
+.authActions {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.authBtnPrimary {
+  flex: 1;
+  padding: 11px;
+  background: #5b7cfa;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 0.87rem;
+  font-weight: 700;
+  text-decoration: none;
+  text-align: center;
+  transition: background 0.2s;
+}
+
+.authBtnPrimary:hover { background: #4a6af0; }
+
+.authBtnDanger {
+  flex: 1;
+  padding: 11px;
+  background: rgba(220, 60, 60, 0.18);
+  border: 1px solid rgba(220, 60, 60, 0.25);
+  border-radius: 10px;
+  color: rgba(255, 120, 120, 0.85);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.authBtnDanger:hover {
+  background: rgba(220, 60, 60, 0.32);
+  border-color: rgba(220, 60, 60, 0.5);
+  color: #fff;
+}
+
+.authDismiss {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 0.78rem;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: color 0.2s;
+}
+
+.authDismiss:hover { color: rgba(255, 255, 255, 0.6); }
 
 .emptyCart {
   display: flex;

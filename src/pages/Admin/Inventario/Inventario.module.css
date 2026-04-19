@@ -1,0 +1,183 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #5b7cfa;
+}
+
+/* ── Buscador ── */
+.searchBox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 8px 14px;
+}
+
+.searchIcon { color: rgba(255,255,255,0.35); }
+
+.searchInput {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-size: 0.85rem;
+  width: 180px;
+}
+
+.searchInput::placeholder { color: rgba(255,255,255,0.3); }
+
+/* ── Tabla ── */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #fff;
+  font-size: 0.88rem;
+}
+
+.table thead tr {
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.table th {
+  text-align: left;
+  padding: 12px 16px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.5);
+  font-size: 0.82rem;
+  letter-spacing: 0.5px;
+}
+
+.table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  vertical-align: middle;
+}
+
+.table tbody tr {
+  transition: background 0.15s;
+}
+
+.table tbody tr:hover {
+  background: rgba(255,255,255,0.03);
+}
+
+.rowArchived td {
+  opacity: 0.45;
+}
+
+/* ── Celdas ── */
+.productImg {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: rgba(255,255,255,0.05);
+}
+
+.productName {
+  font-weight: 500;
+}
+
+.price {
+  font-weight: 600;
+  color: rgba(255,255,255,0.9);
+}
+
+/* Status dot */
+.statusDot {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+}
+.statusActive   { background: #4CAF50; box-shadow: 0 0 6px rgba(76,175,80,0.6); }
+.statusInactive { background: rgba(255,255,255,0.2); }
+
+/* Archive button */
+.archiveBtn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.05);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, border-color 0.2s;
+}
+.archiveBtn:hover     { background: rgba(255,255,255,0.1); }
+.archiveBtnActive     { background: rgba(91,124,250,0.2); border-color: #5b7cfa; color: #5b7cfa; }
+
+/* Edit button */
+.editBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.55);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+.editBtn:hover {
+  background: rgba(91,124,250,0.18);
+  border-color: rgba(91,124,250,0.5);
+  color: #fff;
+}
+
+/* ── Empty state ── */
+.emptyWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  height: 100%;
+  min-height: 400px;
+  color: rgba(255,255,255,0.5);
+}
+
+.emptyIcon { font-size: 3rem; }
+
+.emptyText {
+  font-size: 1rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.6);
+}
+
+.addBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: rgba(91,124,250,0.15);
+  border: 1px solid rgba(91,124,250,0.4);
+  border-radius: 30px;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.addBtn:hover { background: rgba(91,124,250,0.28); }

@@ -1,36 +1,183 @@
 .sidebar {
   width: 220px;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border-radius: 15px;
-  padding: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 18px;
+  padding: 22px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-left: 2px solid rgba(91, 124, 250, 0.5);
   height: fit-content;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255,255,255,0.06);
 }
 
 .sidebarTitle {
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   font-weight: 800;
-  margin-bottom: 25px;
+  font-style: italic;
+  margin-bottom: 20px;
   color: #fff;
+  letter-spacing: -0.5px;
 }
 
+/* ── Grupo ── */
 .filterGroup {
-  margin-bottom: 15px;
-  cursor: pointer;
+  margin-bottom: 4px;
+  border-radius: 10px;
+  overflow: hidden;
 }
 
 .filterHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: #ccc;
-  font-size: 0.9rem;
-  padding: 10px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  transition: color 0.3s;
+  width: 100%;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.88rem;
+  font-weight: 500;
+  padding: 11px 10px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  letter-spacing: 0.2px;
 }
 
 .filterHeader:hover {
+  background: rgba(255, 255, 255, 0.06);
   color: #fff;
+}
+
+.filterHeaderOpen {
+  background: rgba(91, 124, 250, 0.12);
+  color: #fff;
+}
+
+.filterLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chevron {
+  display: flex;
+  align-items: center;
+  color: inherit;
+  opacity: 0.7;
+}
+
+/* ── Badge de conteo ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 20px;
+  background: #5b7cfa;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  font-style: normal;
+  line-height: 1;
+}
+
+/* ── Precio ── */
+.priceInputs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 10px 14px;
+}
+
+.priceField {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 9px;
+  overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.priceField:focus-within {
+  border-color: rgba(91, 124, 250, 0.6);
+  box-shadow: 0 0 0 3px rgba(91, 124, 250, 0.12);
+}
+
+.pricePrefix {
+  padding: 0 8px;
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 0.82rem;
+  font-weight: 600;
+  user-select: none;
+}
+
+.priceInput {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 8px 10px 8px 0;
+  color: #fff;
+  font-size: 0.85rem;
+  outline: none;
+}
+
+.priceInput::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.priceInput::-webkit-outer-spin-button,
+.priceInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+/* ── Checkboxes ── */
+.checkList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px 10px 14px;
+}
+
+.checkLabel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.87rem;
+  font-weight: 400;
+  padding: 6px 4px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: color 0.2s, background 0.2s;
+  user-select: none;
+}
+
+.checkLabel:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.checkBox {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+  border-radius: 5px;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+  color: #fff;
+}
+
+.checkBoxActive {
+  background: #5b7cfa;
+  border-color: #5b7cfa;
+  box-shadow: 0 0 8px rgba(91, 124, 250, 0.5);
 }

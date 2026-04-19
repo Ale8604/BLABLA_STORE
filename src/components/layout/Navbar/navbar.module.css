@@ -3,10 +3,10 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.6rem 2rem;
-  background: rgba(255, 255, 255, 0.03); /* Fondo muy sutil */
-  backdrop-filter: blur(15px); /* El efecto de vidrio */
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 255, 255, 0.1); /* Borde fino para dar forma */
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 100px;
   margin: 20px auto;
   width: 90%;
@@ -16,14 +16,12 @@
   z-index: 1000;
 }
 
-.logoWrapper {
-  display: flex;
-  align-items: center;
-}
+.logoWrapper { display: flex; align-items: center; }
 
 .logo {
   height: 60px;
   width: auto;
+  filter: drop-shadow(0 0 18px rgba(91, 124, 250, 0.5)) drop-shadow(0 0 6px rgba(255, 255, 255, 0.15));
 }
 
 .menuLinks {
@@ -58,15 +56,15 @@
   color: #fff;
   cursor: pointer;
   opacity: 0.7;
-  transition: opacity 0.3s, transform 0.2s;
+  transition: opacity 0.3s, transform 0.2s, color 0.2s;
   display: flex;
   align-items: center;
 }
 
-.iconBtn:hover {
+.iconBtn:hover, .iconBtnActive {
   opacity: 1;
   transform: scale(1.1);
-  color: #0047FF; /* Tu azul de acento */
+  color: #5b7cfa;
 }
 
 .cartWrapper {
@@ -79,7 +77,7 @@
   position: absolute;
   top: -10px;
   right: -10px;
-  background-color: #ff3b3bb1; /* Rojo Apple */
+  background-color: #ff3b3bb1;
   color: white;
   font-size: 0.7rem;
   font-weight: bold;
@@ -90,5 +88,97 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  /*border: 1px solid #ffffff;  Para que resalte en el fondo oscuro */
+}
+
+/* ── User dropdown ── */
+.userWrapper {
+  position: relative;
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 14px);
+  right: 0;
+  min-width: 210px;
+  background: rgba(15, 18, 30, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 8px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+  z-index: 2000;
+}
+
+.dropdownUser {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px 8px;
+}
+
+.dropdownAvatar { color: rgba(255,255,255,0.4); flex-shrink: 0; }
+
+.dropdownName {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #fff;
+  margin: 0;
+}
+
+.dropdownEmail {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.35);
+  margin: 2px 0 0;
+}
+
+.dropdownDivider {
+  height: 1px;
+  background: rgba(255,255,255,0.07);
+  margin: 6px 0;
+}
+
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  color: rgba(255,255,255,0.6);
+  font-size: 0.87rem;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.dropdownItem:hover {
+  background: rgba(255,255,255,0.07);
+  color: #fff;
+}
+
+/* ── Toast ── */
+.toast {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: rgba(15, 18, 30, 0.95);
+  border: 1px solid rgba(74, 222, 128, 0.3);
+  border-radius: 100px;
+  color: #4ade80;
+  font-size: 0.85rem;
+  font-weight: 600;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  white-space: nowrap;
 }
