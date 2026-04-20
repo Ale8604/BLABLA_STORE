@@ -46,7 +46,7 @@ export const CartProvider = ({ children }) => {
   
   const totalPrice = cart.reduce((total, item) => {
     // Limpiamos el precio de comas y símbolos para la operación matemática
-    const priceValue = parseFloat(item.price.replace(/[^0-9.-]+/g, ""));
+    const priceValue = parseFloat(String(item.price).replace(/[^0-9.-]+/g, ""));
     return total + (priceValue * item.quantity);
   }, 0);
 

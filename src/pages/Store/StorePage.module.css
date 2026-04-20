@@ -17,8 +17,8 @@
   display: flex;
   flex-direction: column;
   position: relative;
-  overflow: hidden; 
-  background-color: #0B0E14; /* Fondo base sólido */
+  overflow: hidden;
+  background-color: #0B0E14;
 }
 
 /* Capa de Brillo Azul (Superior Izquierda) */

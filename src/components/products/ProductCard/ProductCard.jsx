@@ -1,46 +1,87 @@
-import React from 'react';
-import { useCart } from '../../context/CartContext'; // Importa el contexto
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaArrowRight } from 'react-icons/fa';
 import styles from './ProductCard.module.css';
 
-const ProductCard = ({ id, name, price, monthly, colors, image }) => {
-  const { addToCart } = useCart(); // Extrae la función para agregar
+const getOfferActive = (discountPercent, offerStart, offerEnd) => {
+  if (!discountPercent) return false;
+  const now = new Date();
+  if (offerStart && new Date(offerStart) > now) return false;
+  if (offerEnd   && new Date(offerEnd)   < now) return false;
+  return true;
+};
 
-  const handleAddClick = () => {
-    // Creamos el objeto del producto que se va al carrito
-    const product = { id, name, price, image };
-    addToCart(product);
-  };
+const ProductCard = ({ id, name, price, monthly, meses, colorVariants, image, discountPercent, offerStart, offerEnd }) => {
+  const navigate = useNavigate();
+  const [hovered, setHovered] = useState(false);
 
-  // Colores por defecto si no vienen en las props (Naranja, Blanco, Azul Slate)
-  const defaultColors = ['#FF8A00', '#FFFFFF', '#4B4E6D'];
-  const displayColors = colors || defaultColors;
+  const variants = Array.isArray(colorVariants) && colorVariants.length > 0 ? colorVariants : null;
+  const [activeImage, setActiveImage] = useState(variants?.[0]?.image || image);
+
+  const offerActive    = getOfferActive(discountPercent, offerStart, offerEnd);
+  const displayPrice   = offerActive ? Math.round(price * (1 - discountPercent / 100)) : price;
 
   return (
-    <div className={styles.card}>
-      <div className={styles.colorSelectors}>
-        {displayColors.map((color, index) => (
-          <span 
-            key={index} 
-            className={styles.colorCircle} 
-            style={{ backgroundColor: color }}
-          ></span>
-        ))}
-      </div>
-      {/* ... resto de tu código de colores e imagen ... */}
+    <div
+      className={styles.card}
+      onClick={() => navigate(`/producto/${id}`)}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {variants && (
+        <div className={styles.colorSelectors}>
+          {variants.map((v, i) => (
+            <span
+              key={i}
+              className={`${styles.colorCircle} ${activeImage === v.image ? styles.colorCircleActive : ''}`}
+              style={{ backgroundColor: v.color }}
+              onMouseEnter={(e) => { e.stopPropagation(); setActiveImage(v.image); }}
+            />
+          ))}
+        </div>
+      )}
+
+      {offerActive && (
+        <div className={styles.discountBadge}>-{discountPercent}%</div>
+      )}
+
       <div className={styles.imageContainer}>
-        {/* Asegúrate de que src esté usando la variable correcta */}
-        <img src={image} alt={name} className={styles.productImage} /> 
+        <AnimatePresence mode="crossfade">
+          <motion.img
+            key={activeImage}
+            src={activeImage}
+            alt={name}
+            className={styles.productImage}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+          />
+        </AnimatePresence>
       </div>
-      
+
       <div className={styles.info}>
         <h3 className={styles.productName}>{name}</h3>
-        <p className={styles.price}>${price}</p>
-        <p className={styles.installments}>Cuotas desde {monthly}$ por mes por 24 meses</p>
-        
-        {/* Conectamos el click aquí */}
-        <button className={styles.addBtn} onClick={handleAddClick}>
-          Agregar al Carrito
-        </button>
+        <div className={styles.priceRow}>
+          <p className={styles.price}>${displayPrice.toLocaleString()}</p>
+          {offerActive && <p className={styles.priceOriginal}>${price.toLocaleString()}</p>}
+        </div>
+        <p className={styles.installments}>Cuotas desde {monthly}$ por mes por {meses ?? 24} meses</p>
+
+        <motion.div
+          className={styles.detailRow}
+          animate={{ gap: hovered ? '10px' : '6px' }}
+          transition={{ duration: 0.25, ease: 'easeOut' }}
+        >
+          <span className={styles.detailText}>Ver detalles</span>
+          <motion.span
+            animate={{ x: hovered ? 4 : 0 }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
+          >
+            <FaArrowRight size={11} className={styles.detailArrow} />
+          </motion.span>
+        </motion.div>
       </div>
     </div>
   );

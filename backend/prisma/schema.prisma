@@ -27,6 +27,8 @@ model Product {
   name        String
   price       Float
   monthly     Float    @default(0)
+  entrada     Float    @default(0)
+  meses       Int      @default(24)
   brand       String
   condition   String   @default("Nuevo")
   category    String   @default("Teléfonos")
@@ -34,18 +36,38 @@ model Product {
   stock       Int      @default(0)
   description String   @default("")
   specs       String   @default("")
-  image       String   @default("")
-  active      Boolean  @default(true)
+  image          String   @default("")
+  colorVariants  Json     @default("[]")
+  ram            Json     @default("[]")
+  storage        Json     @default("[]")
+  discountPercent Float?
+  offerStart      DateTime?
+  offerEnd        DateTime?
+  active         Boolean  @default(true)
   archived    Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   orderItems  OrderItem[]
 }
 
+model Banner {
+  id        Int      @id @default(autoincrement())
+  image     String
+  title     String   @default("")
+  link      String   @default("")
+  active    Boolean  @default(true)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
 model Order {
   id          Int         @id @default(autoincrement())
+  invoiceCode String?     @unique
   user        User?       @relation(fields: [userId], references: [id])
   userId      Int?
+  clientName   String     @default("")
+  clientPhone  String     @default("")
+  clientCedula String     @default("")
   items       OrderItem[]
   total       Float
   status      OrderStatus @default(PENDING)
@@ -58,6 +80,8 @@ model OrderItem {
   orderId   Int
   product   Product @relation(fields: [productId], references: [id])
   productId Int
+  name      String  @default("")
+  specs     String  @default("")
   quantity  Int
   price     Float
 }

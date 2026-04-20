@@ -1,0 +1,227 @@
+@keyframes moveBlue {
+  0%, 100% { transform: translate(0, 0); }
+  50%       { transform: translate(15%, 10%); }
+}
+@keyframes moveWhite {
+  0%, 100% { transform: translate(0, 0); }
+  50%       { transform: translate(-10%, -5%); }
+}
+
+.page {
+  min-height: 100vh;
+  background-color: #0B0E14;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.page::before {
+  content: '';
+  position: absolute;
+  width: 150%; height: 150%;
+  top: -25%; left: -25%;
+  background: radial-gradient(circle at 20% 20%, #0048ff9f 0%, transparent 40%);
+  filter: blur(120px);
+  pointer-events: none;
+  animation: moveBlue 15s ease-in-out infinite;
+}
+
+.page::after {
+  content: '';
+  position: absolute;
+  width: 150%; height: 150%;
+  bottom: -25%; right: -25%;
+  background: radial-gradient(circle at 80% 80%, #ffffff62 0%, transparent 35%);
+  filter: blur(100px);
+  pointer-events: none;
+  animation: moveWhite 20s ease-in-out infinite;
+}
+
+.main {
+  flex: 1;
+  width: 90%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 0 80px;
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.avatarCircle {
+  color: #5b7cfa;
+  background: rgba(91,124,250,0.1);
+  border: 1px solid rgba(91,124,250,0.2);
+  border-radius: 50%;
+  width: 76px;
+  height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.headerName {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 0 0 4px;
+}
+
+.headerEmail {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.35);
+  margin: 0;
+}
+
+/* Grid */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 640px) {
+  .grid { grid-template-columns: 1fr; }
+}
+
+/* Card */
+.card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px;
+  padding: 28px;
+}
+
+.cardTitle {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 22px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+/* Form */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.field {
+  display: flex;
+  align-items: center;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 0 14px;
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+
+.field:focus-within {
+  border-color: rgba(91,124,250,0.5);
+  box-shadow: 0 0 0 3px rgba(91,124,250,0.1);
+}
+
+.fieldIcon {
+  color: rgba(255,255,255,0.25);
+  flex-shrink: 0;
+}
+
+.input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 12px 10px;
+  color: #fff;
+  font-size: 0.88rem;
+}
+
+.input::placeholder { color: rgba(255,255,255,0.2); }
+
+.input:-webkit-autofill,
+.input:-webkit-autofill:hover,
+.input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #0d1117 inset;
+  -webkit-text-fill-color: #fff;
+  caret-color: #fff;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+.input:disabled {
+  color: rgba(255,255,255,0.2);
+  cursor: not-allowed;
+}
+
+.eyeBtn {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.25);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.eyeBtn:hover { color: rgba(255,255,255,0.6); }
+
+.error {
+  font-size: 0.8rem;
+  color: #ff6b6b;
+  padding: 8px 12px;
+  background: rgba(255,80,80,0.08);
+  border: 1px solid rgba(255,80,80,0.18);
+  border-radius: 8px;
+  margin: 0;
+}
+
+.success {
+  font-size: 0.8rem;
+  color: #4ade80;
+  padding: 8px 12px;
+  background: rgba(74,222,128,0.08);
+  border: 1px solid rgba(74,222,128,0.2);
+  border-radius: 8px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.btn {
+  width: 100%;
+  padding: 12px;
+  background: #5b7cfa;
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: background 0.2s, transform 0.1s;
+  box-shadow: 0 4px 16px rgba(91,124,250,0.3);
+}
+
+.btn:hover:not(:disabled) {
+  background: #4a6af0;
+  transform: translateY(-1px);
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}

@@ -38,6 +38,12 @@ export const ProductsProvider = ({ children }) => {
     return updated;
   };
 
+  const setProductOffer = async (id, offerData) => {
+    const updated = await api.patch(`/products/${id}/offer`, offerData);
+    setProducts(prev => prev.map(p => p.id === id ? updated : p));
+    return updated;
+  };
+
   const archiveProduct = async (id) => {
     const updated = await api.patch(`/products/${id}/archive`);
     setProducts(prev => prev.map(p => p.id === id ? updated : p));
@@ -56,7 +62,7 @@ export const ProductsProvider = ({ children }) => {
     <ProductsContext.Provider value={{
       products, activeProducts, archivedProducts,
       loading, error,
-      addProduct, updateProduct, archiveProduct, deleteProduct, loadProducts,
+      addProduct, updateProduct, archiveProduct, deleteProduct, loadProducts, setProductOffer,
     }}>
       {children}
     </ProductsContext.Provider>

@@ -7,13 +7,21 @@ import styles from './navbar.module.css';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 
+const CATEGORIAS = [
+  { label: 'Teléfonos',  to: '/?categoria=Teléfonos'  },
+  { label: 'Accesorios', to: '/?categoria=Accesorios' },
+];
+
 const Navbar = () => {
   const { cartCount, toggleCart } = useCart();
   const { user, logout }          = useAuth();
   const navigate                  = useNavigate();
   const [open, setOpen]           = useState(false);
+  const [catOpen, setCatOpen]     = useState(false);
   const [toast, setToast]         = useState(false);
   const dropdownRef               = useRef(null);
+  const catRef                    = useRef(null);
+  const catTimer                  = useRef(null);
 
   useEffect(() => {
     const handler = (e) => {
@@ -23,6 +31,9 @@ const Navbar = () => {
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
+
+  const openCat  = () => { clearTimeout(catTimer.current); setCatOpen(true); };
+  const closeCat = () => { catTimer.current = setTimeout(() => setCatOpen(false), 120); };
 
   const handleLogout = () => {
     logout();
@@ -54,10 +65,38 @@ const Navbar = () => {
       </div>
 
       <ul className={styles.menuLinks}>
-        <li><Link to="/accesorios">ACCESORIOS</Link></li>
+        <li><Link to="/">INICIO</Link></li>
+        <li
+          className={styles.catItem}
+          ref={catRef}
+          onMouseEnter={openCat}
+          onMouseLeave={closeCat}
+        >
+          <button className={styles.catTrigger}>CATEGORÍAS</button>
+          <AnimatePresence>
+            {catOpen && (
+              <motion.ul
+                className={styles.catDropdown}
+                initial={{ opacity: 0, y: -6, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0,  scale: 1    }}
+                exit={{    opacity: 0, y: -6, scale: 0.97 }}
+                transition={{ duration: 0.18, ease: [0.4, 0, 0.2, 1] }}
+                onMouseEnter={openCat}
+                onMouseLeave={closeCat}
+              >
+                {CATEGORIAS.map(c => (
+                  <li key={c.label}>
+                    <Link to={c.to} className={styles.catOption} onClick={() => setCatOpen(false)}>
+                      {c.label}
+                    </Link>
+                  </li>
+                ))}
+              </motion.ul>
+            )}
+          </AnimatePresence>
+        </li>
         <li><Link to="/ofertas">OFERTAS</Link></li>
-        <li><Link to="/">CELULARES</Link></li>
-        <li><Link to="/servicio">SERVICIO TÉCNICO</Link></li>
+        <li><Link to="/nosotros">ACERCA DE NOSOTROS</Link></li>
       </ul>
 
       <div className={styles.navIcons}>
@@ -96,6 +135,9 @@ const Navbar = () => {
                       </div>
                     </div>
                     <div className={styles.dropdownDivider} />
+                    <Link to="/perfil" className={styles.dropdownItem} onClick={() => setOpen(false)}>
+                      <FaUserCircle size={13} /> Mi perfil
+                    </Link>
                     <button className={styles.dropdownItem} onClick={handleLogout}>
                       <FaSignOutAlt size={13} /> Cerrar sesión
                     </button>

@@ -181,3 +181,77 @@
   transition: background 0.2s;
 }
 .addBtn:hover { background: rgba(91,124,250,0.28); }
+
+/* ── Toast ── */
+.toast {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 18px;
+  background: rgba(15, 18, 30, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.toastMsg {
+  font-size: 0.87rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.toastMsg strong {
+  color: #fff;
+  font-weight: 600;
+}
+
+.undoBtn {
+  padding: 5px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(91, 124, 250, 0.5);
+  background: rgba(91, 124, 250, 0.15);
+  color: #5b7cfa;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+
+.undoBtn:hover {
+  background: rgba(91, 124, 250, 0.3);
+  color: #fff;
+}
+
+.toastClose {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.35);
+  cursor: pointer;
+  padding: 2px;
+  transition: color 0.2s;
+}
+
+.toastClose:hover { color: rgba(255, 255, 255, 0.7); }
+
+.toastProgress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #5b7cfa;
+  transform-origin: left;
+  border-radius: 0 0 14px 14px;
+}

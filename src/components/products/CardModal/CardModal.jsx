@@ -2,23 +2,44 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
+import { api } from '../../../lib/api';
 import styles from './CardModal.module.css';
-import { FaPlus, FaMinus, FaShoppingBag, FaCheckCircle, FaTimes, FaUserCircle } from 'react-icons/fa';
+import { FaPlus, FaMinus, FaShoppingBag, FaCheckCircle, FaTimes, FaUserCircle, FaReceipt } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const CardModal = () => {
   const { cart, isCartOpen, toggleCart, totalPrice, addToCart, removeFromCart, deleteFromCart, clearCart } = useCart();
   const { user } = useAuth();
-  const [isOrderSent, setIsOrderSent]   = useState(false);
+  const [isOrderSent, setIsOrderSent]     = useState(false);
+  const [invoiceCode, setInvoiceCode]     = useState('');
   const [showAuthPopup, setShowAuthPopup] = useState(false);
 
-  const sendOrder = () => {
+  const sendOrder = async () => {
     const message = cart.map(item => `• ${item.name} (x${item.quantity}) - $${item.price}`).join('\n');
     const totalText = `\n\n*Total a pagar: $${totalPrice.toLocaleString()}*`;
     const header = `¡Hola! Me gustaría realizar el siguiente pedido en *BlaBla Store*:\n\n`;
     const encodedMessage = encodeURIComponent(header + message + totalText);
     const phoneNumber = import.meta.env.VITE_WHATSAPP_NUMBER;
     window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
+
+    try {
+      const order = await api.post('/orders', {
+        userId:      user?.id   ?? null,
+        clientName:  user?.nombre ?? '',
+        clientPhone: user?.telefono ?? '',
+        items: cart.map(item => ({
+          productId: Number(String(item.id).split('-')[0]),
+          name:      item.name,
+          specs:     item.specs || '',
+          quantity:  item.quantity,
+          price:     item.price,
+        })),
+      });
+      setInvoiceCode(order.invoiceCode || '');
+    } catch {
+      setInvoiceCode('');
+    }
+
     setIsOrderSent(true);
     if (clearCart) clearCart();
   };
@@ -79,6 +100,12 @@ const CardModal = () => {
                 <FaCheckCircle size={60} className={styles.successIcon} />
                 <h3>¡Gracias por tu pedido!</h3>
                 <p>Tu solicitud ha sido enviada con éxito.</p>
+                {invoiceCode && (
+                  <div className={styles.invoiceCodeBox}>
+                    <FaReceipt size={13} />
+                    <span>Código de pedido: <strong>{invoiceCode}</strong></span>
+                  </div>
+                )}
                 <button className={styles.orderBtn} onClick={handleFinishAndClear}>Continuar navegando</button>
               </motion.div>
             ) : cart.length === 0 ? (
@@ -95,6 +122,7 @@ const CardModal = () => {
                       <img src={item.image} alt={item.name} className={styles.itemImg} />
                       <div className={styles.itemInfo}>
                         <h4>{item.name}</h4>
+                        {item.specs && <p className={styles.itemSpecs}>{item.specs}</p>}
                         <p>Precio - <span className={styles.greenText}>${item.price}</span></p>
                       </div>
                       <div className={styles.quantityControls}>

@@ -83,12 +83,15 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   padding: 0 14px;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.35s cubic-bezier(0.4,0,0.2,1),
+              box-shadow   0.35s cubic-bezier(0.4,0,0.2,1),
+              background   0.35s cubic-bezier(0.4,0,0.2,1);
 }
 
 .field:focus-within {
   border-color: rgba(91, 124, 250, 0.6);
   box-shadow: 0 0 0 3px rgba(91, 124, 250, 0.12);
+  background: rgba(255, 255, 255, 0.09);
 }
 
 .fieldIcon {

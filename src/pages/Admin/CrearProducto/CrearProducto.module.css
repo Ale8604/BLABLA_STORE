@@ -33,6 +33,7 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 14px;
+  row-gap: 10px;
 }
 
 .imageSlot {
@@ -52,6 +53,16 @@
 .imageSlot:hover {
   border-color: rgba(91,124,250,0.4);
   background: rgba(91,124,250,0.05);
+}
+
+.imageSlotDraggable {
+  cursor: grab;
+}
+
+.imageSlotDraggable:active {
+  cursor: grabbing;
+  opacity: 0.6;
+  border-color: rgba(91,124,250,0.6);
 }
 
 .fileInput { display: none; }
@@ -100,6 +111,55 @@
 .placeholderText {
   font-size: 0.85rem;
   color: rgba(255,255,255,0.45);
+}
+
+/* ── Color picker ── */
+.imageSlotWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.colorPickerRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 2px;
+}
+
+.colorSwatch {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.2);
+  cursor: pointer;
+  flex-shrink: 0;
+  position: relative;
+  display: block;
+  overflow: hidden;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.colorSwatch:hover {
+  border-color: rgba(255,255,255,0.6);
+  transform: scale(1.1);
+}
+
+.colorInputHidden {
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  top: -50%;
+  left: -50%;
+  opacity: 0;
+  cursor: pointer;
+  border: none;
+  padding: 0;
+}
+
+.colorLabel {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.4);
 }
 
 /* ── Remove-bg button ── */
@@ -191,15 +251,18 @@
   color: #fff;
   font-size: 0.87rem;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.35s cubic-bezier(0.4,0,0.2,1),
+              box-shadow   0.35s cubic-bezier(0.4,0,0.2,1),
+              background   0.35s cubic-bezier(0.4,0,0.2,1);
   width: 100%;
 }
 
 .input::placeholder { color: rgba(255,255,255,0.25); }
 
 .input:focus, .select:focus {
-  border-color: rgba(91,124,250,0.5);
+  border-color: rgba(91,124,250,0.55);
   box-shadow: 0 0 0 3px rgba(91,124,250,0.1);
+  background: rgba(255,255,255,0.09);
 }
 
 .select { cursor: pointer; }
@@ -216,10 +279,16 @@
   resize: vertical;
   min-height: 90px;
   width: 100%;
-  transition: border-color 0.2s;
+  transition: border-color 0.35s cubic-bezier(0.4,0,0.2,1),
+              box-shadow   0.35s cubic-bezier(0.4,0,0.2,1),
+              background   0.35s cubic-bezier(0.4,0,0.2,1);
 }
 
-.textarea:focus { border-color: rgba(91,124,250,0.5); }
+.textarea:focus {
+  border-color: rgba(91,124,250,0.55);
+  box-shadow: 0 0 0 3px rgba(91,124,250,0.1);
+  background: rgba(255,255,255,0.09);
+}
 
 /* ── Toggle ── */
 .toggleRow {
@@ -260,6 +329,83 @@
 .toggleLabel {
   font-size: 0.85rem;
   color: rgba(255,255,255,0.6);
+}
+
+/* ── Tag input ── */
+.spanTwo { grid-column: span 2; }
+
+.tagBox {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 6px 10px;
+  transition: border-color 0.35s cubic-bezier(0.4,0,0.2,1),
+              box-shadow   0.35s cubic-bezier(0.4,0,0.2,1);
+  cursor: text;
+}
+
+.tagBox:focus-within {
+  border-color: rgba(91,124,250,0.55);
+  box-shadow: 0 0 0 3px rgba(91,124,250,0.1);
+}
+
+.tag {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px 3px 10px;
+  background: rgba(91,124,250,0.18);
+  border: 1px solid rgba(91,124,250,0.35);
+  border-radius: 20px;
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.tagRemove {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.5);
+  cursor: pointer;
+  font-size: 0.95rem;
+  line-height: 1;
+  padding: 0;
+  transition: color 0.15s;
+}
+.tagRemove:hover { color: #fff; }
+
+.tagInput {
+  flex: 1;
+  min-width: 80px;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-size: 0.87rem;
+  padding: 2px 4px;
+}
+.tagInput::placeholder { color: rgba(255,255,255,0.25); }
+
+/* ── Preview cuota ── */
+.monthlyPreview {
+  font-size: 0.83rem;
+  color: rgba(255,255,255,0.55);
+  background: rgba(91,124,250,0.07);
+  border: 1px solid rgba(91,124,250,0.18);
+  border-radius: 8px;
+  padding: 9px 14px;
+  margin-top: -6px;
+}
+
+.monthlyPreview strong {
+  color: #5b7cfa;
+  font-size: 0.95rem;
 }
 
 /* ── Error ── */

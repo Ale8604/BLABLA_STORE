@@ -1,0 +1,228 @@
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { FaArrowLeft, FaShoppingCart } from 'react-icons/fa';
+import Navbar from '../../components/layout/Navbar/navbar';
+import Footer from '../../components/layout/Footer/Footer';
+import CardModal from '../../components/products/CardModal/CardModal';
+import { useProducts } from '../../components/context/ProductsContext';
+import { useCart } from '../../components/context/CartContext';
+import styles from './ProductDetail.module.css';
+
+const ProductDetail = () => {
+  const { id }                   = useParams();
+  const { products }             = useProducts();
+  const { addToCart }            = useCart();
+  const navigate                 = useNavigate();
+
+  const product = products.find(p => p.id === Number(id));
+
+  const variants  = Array.isArray(product?.colorVariants) && product.colorVariants.length > 0
+    ? product.colorVariants : null;
+  const ramOpts     = Array.isArray(product?.ram)     ? product.ram     : [];
+  const storageOpts = Array.isArray(product?.storage) ? product.storage : [];
+
+  const [activeImg,     setActiveImg]     = useState(null);
+  const [activeColor,   setActiveColor]   = useState(0);
+  const [selectedRam,   setSelectedRam]   = useState(null);
+  const [selectedStore, setSelectedStore] = useState(null);
+  const [added,         setAdded]         = useState(false);
+
+  useEffect(() => {
+    if (product) {
+      const first = variants?.[0]?.image || product.image;
+      setActiveImg(first);
+      setActiveColor(0);
+      setSelectedRam(ramOpts[0]  ?? null);
+      setSelectedStore(storageOpts[0] ?? null);
+    }
+  }, [product?.id]);
+
+  if (!product) return (
+    <div className={styles.notFound}>
+      <p>Producto no encontrado.</p>
+      <button onClick={() => navigate('/')}>Volver</button>
+    </div>
+  );
+
+  const handleAddToCart = () => {
+    const specs = [
+      selectedRam,
+      selectedStore,
+    ].filter(Boolean).join(' / ');
+
+    addToCart({
+      id:    `${product.id}-${selectedRam}-${selectedStore}-${activeColor}`,
+      name:  product.name,
+      specs,
+      price: displayPrice,
+      image: activeImg,
+    });
+    setAdded(true);
+    setTimeout(() => setAdded(false), 2000);
+  };
+
+  const offerActive = (() => {
+    if (!product.discountPercent) return false;
+    const now = new Date();
+    if (product.offerStart && new Date(product.offerStart) > now) return false;
+    if (product.offerEnd   && new Date(product.offerEnd)   < now) return false;
+    return true;
+  })();
+  const displayPrice = offerActive
+    ? Math.round(product.price * (1 - product.discountPercent / 100))
+    : product.price;
+
+  const selectColor = (i) => {
+    setActiveColor(i);
+    if (variants?.[i]) setActiveImg(variants[i].image);
+  };
+
+  return (
+    <div className={styles.page}>
+      <Navbar />
+      <CardModal />
+      <main className={styles.main}>
+        <button className={styles.back} onClick={() => navigate(-1)}>
+          <FaArrowLeft size={13} /> Volver
+        </button>
+
+        <div className={styles.layout}>
+
+          {/* ── Columna izquierda: imágenes ── */}
+          <div className={styles.gallery}>
+            <motion.div
+              className={styles.mainImgBox}
+              key={activeImg}
+              initial={{ opacity: 0, scale: 0.97 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+            >
+              <img src={activeImg} alt={product.name} className={styles.mainImg} />
+            </motion.div>
+
+            {variants && variants.length > 1 && (
+              <div className={styles.thumbRow}>
+                {variants.map((v, i) => (
+                  <button
+                    key={i}
+                    className={`${styles.thumb} ${activeColor === i ? styles.thumbActive : ''}`}
+                    onClick={() => selectColor(i)}
+                  >
+                    <img src={v.image} alt="" />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* ── Columna derecha: info ── */}
+          <div className={styles.info}>
+            <span className={styles.brand}>{product.brand}</span>
+            <h1 className={styles.name}>{product.name}</h1>
+
+            {offerActive && (
+              <div className={styles.discountBadge}>-{product.discountPercent}% OFF</div>
+            )}
+
+            <div className={styles.priceRow}>
+              <span className={styles.price}>${displayPrice.toLocaleString()}</span>
+              {offerActive && (
+                <span className={styles.priceOriginal}>${product.price.toLocaleString()}</span>
+              )}
+              {product.monthly > 0 && (
+                <span className={styles.monthly}>
+                  Desde ${product.monthly} / mes × {product.meses ?? 24} meses
+                </span>
+              )}
+            </div>
+
+            <div className={styles.divider} />
+
+            {/* Colores */}
+            {variants && (
+              <div className={styles.section}>
+                <p className={styles.sectionLabel}>
+                  Color: <strong>{variants[activeColor]?.color ?? ''}</strong>
+                </p>
+                <div className={styles.colorRow}>
+                  {variants.map((v, i) => (
+                    <button
+                      key={i}
+                      className={`${styles.colorDot} ${activeColor === i ? styles.colorDotActive : ''}`}
+                      style={{ backgroundColor: v.color }}
+                      onClick={() => selectColor(i)}
+                      title={v.color}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* RAM */}
+            {ramOpts.length > 0 && (
+              <div className={styles.section}>
+                <p className={styles.sectionLabel}>RAM</p>
+                <div className={styles.chipRow}>
+                  {ramOpts.map(r => (
+                    <button
+                      key={r}
+                      className={`${styles.chip} ${selectedRam === r ? styles.chipActive : ''}`}
+                      onClick={() => setSelectedRam(r)}
+                    >{r}</button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Storage */}
+            {storageOpts.length > 0 && (
+              <div className={styles.section}>
+                <p className={styles.sectionLabel}>Almacenamiento</p>
+                <div className={styles.chipRow}>
+                  {storageOpts.map(s => (
+                    <button
+                      key={s}
+                      className={`${styles.chip} ${selectedStore === s ? styles.chipActive : ''}`}
+                      onClick={() => setSelectedStore(s)}
+                    >{s}</button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className={styles.divider} />
+
+            {/* Descripción */}
+            {product.description && (
+              <div className={styles.section}>
+                <p className={styles.sectionLabel}>Descripción</p>
+                <p className={styles.descText}>{product.description}</p>
+              </div>
+            )}
+
+            {/* Specs */}
+            {product.specs && (
+              <div className={styles.section}>
+                <p className={styles.sectionLabel}>Especificaciones</p>
+                <p className={styles.descText}>{product.specs}</p>
+              </div>
+            )}
+
+            <motion.button
+              className={`${styles.cartBtn} ${added ? styles.cartBtnAdded : ''}`}
+              onClick={handleAddToCart}
+              whileTap={{ scale: 0.97 }}
+            >
+              <FaShoppingCart size={16} />
+              {added ? '¡Agregado!' : 'Agregar al Carrito'}
+            </motion.button>
+          </div>
+        </div>
+      </main>
+      <Footer />
+    </div>
+  );
+};
+
+export default ProductDetail;

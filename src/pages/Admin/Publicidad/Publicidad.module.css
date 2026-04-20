@@ -1,0 +1,374 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.pageTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #5b7cfa;
+}
+
+.card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cardTitle {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.85);
+}
+
+/* ── Upload slot ── */
+.uploadSlot {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/5;
+  border-radius: 12px;
+  border: 2px dashed rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.03);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.uploadSlot:hover { border-color: rgba(91,124,250,0.5); }
+
+.fileInput { display: none; }
+
+.uploadPreview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.removePreview {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.uploadPlaceholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255,255,255,0.35);
+  pointer-events: none;
+}
+
+.uploadPlaceholder small {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.25);
+}
+
+/* ── Input ── */
+.input {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: #fff;
+  font-size: 0.87rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.input:focus { border-color: rgba(91,124,250,0.5); }
+.input::placeholder { color: rgba(255,255,255,0.25); }
+
+.error {
+  font-size: 0.83rem;
+  color: #ff6b6b;
+  background: rgba(255,80,80,0.08);
+  border: 1px solid rgba(255,80,80,0.18);
+  border-radius: 8px;
+  padding: 8px 14px;
+}
+
+.addBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  padding: 10px 24px;
+  background: rgba(91,124,250,0.2);
+  border: 1px solid rgba(91,124,250,0.45);
+  border-radius: 30px;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.addBtn:hover:not(:disabled) { background: rgba(91,124,250,0.35); }
+.addBtn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ── Banner list ── */
+.bannerList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bannerItem {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 10px 14px;
+  transition: opacity 0.2s;
+}
+
+.bannerItem.inactive { opacity: 0.45; }
+
+.thumb {
+  width: 100px;
+  height: 32px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.bannerInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.bannerTitle {
+  font-size: 0.87rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.85);
+}
+
+.bannerStatus {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.4);
+}
+
+.bannerActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toggleBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgba(255,255,255,0.4);
+  display: flex;
+  align-items: center;
+  transition: color 0.2s;
+}
+
+.deleteBtn {
+  background: rgba(220,60,60,0.15);
+  border: 1px solid rgba(220,60,60,0.25);
+  border-radius: 8px;
+  color: rgba(255,100,100,0.8);
+  cursor: pointer;
+  padding: 6px 8px;
+  display: flex;
+  align-items: center;
+  transition: background 0.2s;
+}
+
+.deleteBtn:hover { background: rgba(220,60,60,0.3); color: #fff; }
+
+/* ── Offer form ── */
+.offerForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.offerRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  align-items: end;
+}
+
+.offerField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.offerLabel {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.45);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.select {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: #fff;
+  font-size: 0.87rem;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.select:focus { border-color: rgba(91,124,250,0.5); }
+
+.select option {
+  background: #1a1f2e;
+  color: #fff;
+}
+
+.discountInput {
+  position: relative;
+}
+
+.discountSign {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(255,255,255,0.35);
+  font-size: 0.87rem;
+  pointer-events: none;
+}
+
+/* Price preview */
+.pricePreview {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: rgba(245,158,11,0.08);
+  border: 1px solid rgba(245,158,11,0.2);
+  border-radius: 10px;
+  flex-wrap: wrap;
+}
+
+.priceOld {
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.35);
+  text-decoration: line-through;
+}
+
+.priceNew {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.badgePreview {
+  font-size: 0.75rem;
+  font-weight: 800;
+  background: #f59e0b;
+  color: #000;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+/* Offer list */
+.offerList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.offerItem {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 12px;
+  padding: 10px 14px;
+}
+
+.offerThumb {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.05);
+  flex-shrink: 0;
+}
+
+.offerInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.offerName {
+  font-size: 0.87rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.9);
+}
+
+.offerPrices {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.45);
+}
+
+.offerPrices strong { color: #4ade80; }
+
+.offerDates {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.3);
+}
+
+.offerBadgeWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.offerStatusDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.dotActive  { background: #4ade80; box-shadow: 0 0 6px #4ade80; }
+.dotPending { background: #f59e0b; }
+
+.offerBadge {
+  font-size: 0.75rem;
+  font-weight: 800;
+  background: #f59e0b;
+  color: #000;
+  padding: 2px 8px;
+  border-radius: 20px;
+}

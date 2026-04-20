@@ -6,15 +6,18 @@ import './index.css'
 import { CartProvider } from './components/context/CartContext'
 import { ProductsProvider } from './components/context/ProductsContext'
 import { AuthProvider } from './components/context/AuthContext'
+import { BannersProvider } from './components/context/BannersContext'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
       <AuthProvider>
         <ProductsProvider>
-          <CartProvider>
-            <App />
-          </CartProvider>
+          <BannersProvider>
+            <CartProvider>
+              <App />
+            </CartProvider>
+          </BannersProvider>
         </ProductsProvider>
       </AuthProvider>
     </BrowserRouter>

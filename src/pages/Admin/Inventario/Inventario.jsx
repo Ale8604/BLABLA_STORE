@@ -1,13 +1,41 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaEdit, FaCheck, FaSearch, FaPlusCircle } from 'react-icons/fa';
+import { FaEdit, FaCheck, FaSearch, FaPlusCircle, FaTimes } from 'react-icons/fa';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useProducts } from '../../../components/context/ProductsContext';
 import styles from './Inventario.module.css';
 
+const TOAST_DURATION = 10000;
+
 const Inventario = () => {
   const { activeProducts, archivedProducts, archiveProduct } = useProducts();
-  const [search, setSearch] = useState('');
-  const navigate = useNavigate();
+  const [search, setSearch]   = useState('');
+  const [toast, setToast]     = useState(null);
+  const timerRef              = useRef(null);
+  const navigate              = useNavigate();
+
+  const dismissToast = () => {
+    clearTimeout(timerRef.current);
+    setToast(null);
+  };
+
+  const handleArchive = (product) => {
+    archiveProduct(product.id);
+    clearTimeout(timerRef.current);
+    setToast({
+      productId: product.id,
+      productName: product.name,
+      wasArchived: !product.archived,
+    });
+    timerRef.current = setTimeout(dismissToast, TOAST_DURATION);
+  };
+
+  const handleUndo = () => {
+    if (toast) archiveProduct(toast.productId);
+    dismissToast();
+  };
+
+  useEffect(() => () => clearTimeout(timerRef.current), []);
 
   const allVisible = [...activeProducts, ...archivedProducts];
 
@@ -68,7 +96,7 @@ const Inventario = () => {
               <td>
                 <button
                   className={`${styles.archiveBtn} ${product.archived ? styles.archiveBtnActive : ''}`}
-                  onClick={() => archiveProduct(product.id)}
+                  onClick={() => handleArchive(product)}
                   title={product.archived ? 'Restaurar' : 'Archivar'}
                 >
                   {product.archived && <FaCheck size={13} />}
@@ -87,6 +115,29 @@ const Inventario = () => {
           ))}
         </tbody>
       </table>
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            className={styles.toast}
+            initial={{ y: 24, opacity: 0, scale: 0.96 }}
+            animate={{ y: 0,  opacity: 1, scale: 1    }}
+            exit={{    y: 16, opacity: 0, scale: 0.96 }}
+            transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1] }}
+          >
+            <span className={styles.toastMsg}>
+              <strong>{toast.productName}</strong> {toast.wasArchived ? 'archivado' : 'restaurado'}
+            </span>
+            <button className={styles.undoBtn} onClick={handleUndo}>Deshacer</button>
+            <button className={styles.toastClose} onClick={dismissToast}><FaTimes size={11} /></button>
+            <motion.div
+              className={styles.toastProgress}
+              initial={{ scaleX: 1 }}
+              animate={{ scaleX: 0 }}
+              transition={{ duration: TOAST_DURATION / 1000, ease: 'linear' }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

@@ -14,6 +14,8 @@ const register = async (req, res) => {
     const { email, password, nombre, apellido, cedula, telefono, direccion } = req.body;
     if (!email || !password)
       return res.status(400).json({ error: 'Email y contraseña requeridos' });
+    if (password.length < 8)
+      return res.status(400).json({ error: 'La contraseña debe tener al menos 8 caracteres.' });
 
     // Verificaciones en paralelo para mayor velocidad
     const [emailExists, cedulaExists, telefonoExists] = await Promise.all([
@@ -83,7 +85,7 @@ const findAccount = async (req, res) => {
 
     const user = await prisma.user.findUnique({
       where: { email },
-      select: { email: true, nombre: true, apellido: true, cedula: true, telefono: true, direccion: true },
+      select: { email: true, nombre: true, apellido: true },
     });
 
     if (!user) return res.status(404).json({ error: 'No existe ninguna cuenta con ese correo electrónico.' });
@@ -100,6 +102,8 @@ const resetPassword = async (req, res) => {
     const { email, cedula, password } = req.body;
     if (!email || !cedula || !password)
       return res.status(400).json({ error: 'Datos incompletos' });
+    if (password.length < 8)
+      return res.status(400).json({ error: 'La contraseña debe tener al menos 8 caracteres.' });
 
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) return res.status(404).json({ error: 'Cuenta no encontrada' });
@@ -117,4 +121,42 @@ const resetPassword = async (req, res) => {
   }
 };
 
-module.exports = { register, login, me, findAccount, resetPassword };
+const updateMe = async (req, res) => {
+  try {
+    const { nombre } = req.body;
+    const user = await prisma.user.update({
+      where: { id: req.user.id },
+      data: { nombre },
+      select: { id: true, email: true, role: true, nombre: true, apellido: true },
+    });
+    res.json(user);
+  } catch (err) {
+    console.error('updateMe error:', err);
+    res.status(500).json({ error: 'Error interno al actualizar los datos' });
+  }
+};
+
+const updatePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword)
+      return res.status(400).json({ error: 'Datos incompletos' });
+    if (newPassword.length < 6)
+      return res.status(400).json({ error: 'La nueva contraseña debe tener al menos 6 caracteres.' });
+
+    const user = await prisma.user.findUnique({ where: { id: req.user.id } });
+    const valid = await bcrypt.compare(currentPassword, user.password);
+    if (!valid)
+      return res.status(401).json({ error: 'La contraseña actual es incorrecta.' });
+
+    const hashed = await bcrypt.hash(newPassword, 10);
+    await prisma.user.update({ where: { id: req.user.id }, data: { password: hashed } });
+
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('updatePassword error:', err);
+    res.status(500).json({ error: 'Error interno al cambiar la contraseña' });
+  }
+};
+
+module.exports = { register, login, me, findAccount, resetPassword, updateMe, updatePassword };

@@ -1,0 +1,97 @@
+@keyframes shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position:  600px 0; }
+}
+
+.bone {
+  border-radius: 10px;
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.05) 25%,
+    rgba(255,255,255,0.12) 50%,
+    rgba(255,255,255,0.05) 75%
+  );
+  background-size: 600px 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+/* ── Card skeleton ── */
+.card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.colorRow {
+  width: 60px;
+  height: 12px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+}
+
+.image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding-top: 14px;
+}
+
+.title {
+  height: 16px;
+  width: 75%;
+  border-radius: 6px;
+}
+
+.price {
+  height: 14px;
+  width: 40%;
+  border-radius: 6px;
+}
+
+.sub {
+  height: 10px;
+  width: 90%;
+  border-radius: 6px;
+}
+
+.btn {
+  height: 38px;
+  width: 100%;
+  border-radius: 8px;
+  margin-top: 4px;
+}
+
+/* ── Carousel skeleton ── */
+.carouselWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 16px 0;
+  margin-bottom: 28px;
+}
+
+.carouselSide {
+  width: 21%;
+  aspect-ratio: 1 / 1;
+  border-radius: 14px;
+  opacity: 0.5;
+}
+
+.carouselCenter {
+  width: 50%;
+  aspect-ratio: 1 / 1;
+  border-radius: 18px;
+}

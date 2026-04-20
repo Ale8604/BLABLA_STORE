@@ -1,0 +1,224 @@
+@keyframes moveBlue {
+  0%, 100% { transform: translate(0, 0); }
+  50%       { transform: translate(15%, 10%); }
+}
+@keyframes moveWhite {
+  0%, 100% { transform: translate(0, 0); }
+  50%       { transform: translate(-10%, -5%); }
+}
+
+.page {
+  min-height: 100vh;
+  background-color: #0B0E14;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.page::before {
+  content: '';
+  position: absolute;
+  width: 150%; height: 150%;
+  top: -25%; left: -25%;
+  background: radial-gradient(circle at 20% 20%, #0048ff9f 0%, transparent 40%);
+  filter: blur(120px);
+  pointer-events: none;
+  animation: moveBlue 15s ease-in-out infinite;
+}
+
+.page::after {
+  content: '';
+  position: absolute;
+  width: 150%; height: 150%;
+  bottom: -25%; right: -25%;
+  background: radial-gradient(circle at 80% 80%, #ffffff62 0%, transparent 35%);
+  filter: blur(100px);
+  pointer-events: none;
+  animation: moveWhite 20s ease-in-out infinite;
+}
+
+.main {
+  flex: 1;
+  width: 90%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 60px 0 80px;
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 80px;
+}
+
+/* Hero */
+.hero {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.tag {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: #5b7cfa;
+  background: rgba(91,124,250,0.1);
+  border: 1px solid rgba(91,124,250,0.2);
+  padding: 5px 14px;
+  border-radius: 20px;
+}
+
+.heroTitle {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.15;
+  margin: 0;
+}
+
+.heroSub {
+  font-size: 1rem;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.7;
+  max-width: 600px;
+  margin: 0;
+}
+
+/* Valores */
+.valores {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.valorCard {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 20px;
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.25s;
+  will-change: transform;
+  transform-style: preserve-3d;
+  cursor: default;
+}
+
+.valorCard:hover {
+  border-color: rgba(91,124,250,0.3);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.4), 0 0 0 1px rgba(91,124,250,0.15);
+}
+
+.valorShine {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.07) 0%, transparent 60%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.valorCard:hover .valorShine {
+  opacity: 1;
+}
+
+.valorIcon {
+  color: #5b7cfa;
+  width: 52px;
+  height: 52px;
+  background: rgba(91,124,250,0.1);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.valorTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+
+.valorDesc {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Contacto */
+.contactSection {
+  text-align: center;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 24px;
+  padding: 52px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.contactTitle {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 0;
+}
+
+.contactSub {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.4);
+  margin: 0 0 8px;
+}
+
+.contactBtns {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btnWhatsapp,
+.btnInstagram {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 0.15s, box-shadow 0.2s;
+}
+
+.btnWhatsapp {
+  background: #25d366;
+  color: #fff;
+  box-shadow: 0 4px 18px rgba(37,211,102,0.35);
+}
+
+.btnWhatsapp:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(37,211,102,0.5);
+}
+
+.btnInstagram {
+  background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+  color: #fff;
+  box-shadow: 0 4px 18px rgba(220,39,67,0.3);
+}
+
+.btnInstagram:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(220,39,67,0.45);
+}

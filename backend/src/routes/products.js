@@ -10,6 +10,7 @@ router.get('/:id',           ctrl.getOne);
 router.post('/',      ...guard, ctrl.create);
 router.put('/:id',    ...guard, ctrl.update);
 router.patch('/:id/archive', ...guard, ctrl.archive);
+router.patch('/:id/offer',   ...guard, ctrl.setOffer);
 router.delete('/:id', ...guard, ctrl.remove);
 
 module.exports = router;

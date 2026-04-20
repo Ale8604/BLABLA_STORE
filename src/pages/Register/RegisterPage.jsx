@@ -18,13 +18,20 @@ const RegisterPage = () => {
   const navigate  = useNavigate();
 
   const EMPTY = { nombre: '', apellido: '', cedula: '', telefono: '', direccion: '', email: '', password: '' };
-  const [form, setForm]         = useState(EMPTY);
+
+  const saved = localStorage.getItem('register_draft');
+  const [form, setForm] = useState(saved ? { ...EMPTY, ...JSON.parse(saved) } : EMPTY);
   const [showPass, setShowPass] = useState(false);
   const [error, setError]       = useState('');
   const [loading, setLoading]   = useState(false);
   const [success, setSuccess]   = useState(false);
 
-  const set = (field, value) => setForm(prev => ({ ...prev, [field]: value }));
+  const set = (field, value) => {
+    const updated = { ...form, [field]: value };
+    setForm(updated);
+    const { password, ...safe } = updated;
+    localStorage.setItem('register_draft', JSON.stringify(safe));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -41,6 +48,7 @@ const RegisterPage = () => {
       localStorage.setItem('token', data.token);
       await login(form.email, form.password);
       setForm(EMPTY);
+      localStorage.removeItem('register_draft');
       setSuccess(true);
     } catch (err) {
       setError(err.message);

@@ -1,0 +1,188 @@
+.section {
+  width: 90%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 80px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+/* Header */
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #5b7cfa;
+  background: rgba(91,124,250,0.1);
+  border: 1px solid rgba(91,124,250,0.2);
+  padding: 5px 16px;
+  border-radius: 20px;
+}
+
+.title {
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+  font-weight: 900;
+  color: #fff;
+  margin: 0;
+}
+
+.sub {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.4);
+  margin: 0;
+  max-width: 480px;
+}
+
+/* Grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+/* Outer (handles motion, no transform-style needed) */
+.cardOuter {
+  border-radius: 20px;
+}
+
+/* Card with 3D */
+.card {
+  border-radius: 20px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  overflow: hidden;
+  position: relative;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  will-change: transform;
+  transform-style: preserve-3d;
+  cursor: default;
+}
+
+.card:hover {
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.5),
+    0 0 0 1px rgba(91,124,250,0.2);
+}
+
+/* Shine overlay */
+.shine {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,0.07) 0%,
+    transparent 60%
+  );
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.card:hover .shine {
+  opacity: 1;
+}
+
+/* Map */
+.mapWrapper {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+}
+
+.mapIframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  filter: invert(90%) hue-rotate(180deg) brightness(0.85) saturate(0.8);
+  pointer-events: none;
+}
+
+.mapOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 55%, rgba(13,17,23,0.9) 100%);
+}
+
+/* Card body */
+.cardBody {
+  padding: 20px 22px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.cardTop {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.pinIcon {
+  color: #5b7cfa;
+  background: rgba(91,124,250,0.1);
+  border-radius: 10px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.cardName {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 5px;
+}
+
+.cardAddress {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.4);
+  line-height: 1.55;
+  margin: 0;
+  white-space: pre-line;
+}
+
+/* WhatsApp btn */
+.waBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px;
+  background: rgba(37,211,102,0.12);
+  border: 1px solid rgba(37,211,102,0.25);
+  border-radius: 12px;
+  color: #25d366;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.2s, border-color 0.2s, transform 0.15s;
+}
+
+.waBtn:hover {
+  background: rgba(37,211,102,0.2);
+  border-color: rgba(37,211,102,0.45);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 640px) {
+  .grid { grid-template-columns: 1fr; }
+  .section { padding: 60px 0; }
+}
