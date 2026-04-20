@@ -60,11 +60,42 @@ model Banner {
   createdAt DateTime @default(now())
 }
 
+model Sede {
+  id        Int        @id @default(autoincrement())
+  nombre    String
+  direccion String     @default("")
+  activa    Boolean    @default(true)
+  createdAt DateTime   @default(now())
+  vendedores Vendedor[]
+  orders    Order[]
+}
+
+model Vendedor {
+  id        Int      @id @default(autoincrement())
+  nombre    String
+  sede      Sede     @relation(fields: [sedeId], references: [id])
+  sedeId    Int
+  activo    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  orders    Order[]
+}
+
+model CommissionRule {
+  id         Int      @id @default(autoincrement())
+  categoria  String   @unique
+  porcentaje Float
+  updatedAt  DateTime @updatedAt
+}
+
 model Order {
   id          Int         @id @default(autoincrement())
   invoiceCode String?     @unique
   user        User?       @relation(fields: [userId], references: [id])
   userId      Int?
+  sede        Sede?       @relation(fields: [sedeId], references: [id])
+  sedeId      Int?
+  vendedor    Vendedor?   @relation(fields: [vendedorId], references: [id])
+  vendedorId  Int?
   clientName   String     @default("")
   clientPhone  String     @default("")
   clientCedula String     @default("")

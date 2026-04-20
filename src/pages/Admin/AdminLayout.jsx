@@ -1,18 +1,20 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaInbox, FaPlusCircle, FaCog, FaBook, FaFileInvoiceDollar, FaBullhorn, FaUserCircle, FaSignOutAlt, FaCheckCircle } from 'react-icons/fa';
+import { FaInbox, FaPlusCircle, FaBook, FaFileInvoiceDollar, FaBullhorn, FaUserCircle, FaSignOutAlt, FaCheckCircle, FaTachometerAlt, FaStore, FaPercent } from 'react-icons/fa';
 import logo from '../../assets/logo.png';
 import styles from './AdminLayout.module.css';
 import { useAuth } from '../../components/context/AuthContext';
 
 const NAV_ITEMS = [
+  { to: '/admin/dashboard',   icon: <FaTachometerAlt size={18} />,    label: 'Dashboard' },
   { to: '/admin/inventario',  icon: <FaBook size={18} />,             label: 'Inventario' },
   { to: '/admin/crear',       icon: <FaPlusCircle size={18} />,       label: 'Crear Producto' },
   { to: '/admin/archivados',  icon: <FaInbox size={18} />,            label: 'Archivado' },
   { to: '/admin/publicidad',  icon: <FaBullhorn size={18} />,         label: 'Publicidad' },
   { to: '/admin/facturacion', icon: <FaFileInvoiceDollar size={18}/>, label: 'Facturación' },
-  { to: '/admin/ajustes',     icon: <FaCog size={18} />,              label: 'Ajustes' },
+  { to: '/admin/cajas',       icon: <FaStore size={18} />,            label: 'Cajas' },
+  { to: '/admin/comisiones',  icon: <FaPercent size={18} />,          label: 'Comisiones' },
 ];
 
 const AdminLayout = () => {

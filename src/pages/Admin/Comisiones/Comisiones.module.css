@@ -1,0 +1,144 @@
+.wrapper { display: flex; flex-direction: column; gap: 24px; }
+
+.pageHeader { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+.pageTitle  { font-size: 1.1rem; font-weight: 800; letter-spacing: 2px; color: rgba(255,255,255,0.9); margin: 0 0 2px; }
+.pageSub    { font-size: 0.78rem; color: rgba(255,255,255,0.4); margin: 0; }
+
+.btnAdd {
+  display: flex; align-items: center; gap: 7px; padding: 9px 20px;
+  background: rgba(91,124,250,0.15); border: 1px solid rgba(91,124,250,0.35);
+  border-radius: 100px; color: #5b7cfa; font-size: 0.82rem; font-weight: 600;
+  cursor: pointer; transition: background 0.2s;
+}
+.btnAdd:hover { background: rgba(91,124,250,0.25); }
+
+.info {
+  display: flex; align-items: flex-start; gap: 10px;
+  background: rgba(91,124,250,0.07); border: 1px solid rgba(91,124,250,0.2);
+  border-radius: 12px; padding: 14px 16px;
+}
+.infoIcon { color: #5b7cfa; flex-shrink: 0; margin-top: 2px; }
+.info p   { font-size: 0.8rem; color: rgba(255,255,255,0.55); margin: 0; line-height: 1.5; }
+.info strong { color: rgba(255,255,255,0.8); }
+
+/* List */
+.list { display: flex; flex-direction: column; gap: 6px; }
+
+.listHeader {
+  display: grid; grid-template-columns: 1fr 140px 100px;
+  padding: 8px 16px; font-size: 0.7rem; font-weight: 700;
+  letter-spacing: 0.8px; text-transform: uppercase; color: rgba(255,255,255,0.3);
+}
+
+.row {
+  display: grid; grid-template-columns: 1fr 140px 100px;
+  align-items: center; padding: 12px 16px;
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 12px; transition: border-color 0.2s;
+}
+.row:hover { border-color: rgba(255,255,255,0.12); }
+
+.rowCat { font-size: 0.85rem; font-weight: 600; color: rgba(255,255,255,0.85); }
+
+.rowPct { display: flex; align-items: center; }
+.pctBadge {
+  padding: 4px 12px; background: rgba(91,124,250,0.12);
+  border: 1px solid rgba(91,124,250,0.25); border-radius: 100px;
+  font-size: 0.82rem; font-weight: 700; color: #5b7cfa;
+}
+
+.editPct { display: flex; align-items: center; gap: 6px; }
+.pctInput {
+  width: 60px; padding: 5px 8px; background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(91,124,250,0.4); border-radius: 8px;
+  color: #fff; font-size: 0.82rem; outline: none;
+  -moz-appearance: textfield;
+}
+.pctInput::-webkit-outer-spin-button,
+.pctInput::-webkit-inner-spin-button { -webkit-appearance: none; }
+.pctSign { font-size: 0.82rem; color: rgba(255,255,255,0.5); }
+
+.rowActions { display: flex; gap: 8px; align-items: center; }
+
+.iconBtn {
+  background: none; border: none; color: rgba(255,255,255,0.35);
+  cursor: pointer; padding: 5px; display: flex; align-items: center;
+  border-radius: 6px; transition: color 0.2s, background 0.2s;
+}
+.iconBtn:hover { color: #fff; background: rgba(255,255,255,0.07); }
+
+.iconBtnGreen {
+  background: rgba(74,222,128,0.1); border: none; color: #4ade80;
+  cursor: pointer; padding: 5px; display: flex; align-items: center;
+  border-radius: 6px; transition: background 0.2s;
+}
+.iconBtnGreen:hover { background: rgba(74,222,128,0.2); }
+
+.iconBtnRed {
+  background: none; border: none; color: rgba(248,113,113,0.5);
+  cursor: pointer; padding: 5px; display: flex; align-items: center;
+  border-radius: 6px; transition: color 0.2s, background 0.2s;
+}
+.iconBtnRed:hover { color: #f87171; background: rgba(248,113,113,0.1); }
+
+.skeletonRow {
+  height: 50px; border-radius: 12px;
+  background: rgba(255,255,255,0.05); animation: pulse 1.4s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+.empty { text-align: center; padding: 60px 20px; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.emptyIcon { color: rgba(255,255,255,0.1); }
+.empty p   { color: rgba(255,255,255,0.4); font-size: 0.9rem; margin: 0; }
+
+/* Modal */
+.overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(6px); z-index: 1000;
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.modal {
+  background: #0f1220; border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px; padding: 28px; width: 100%; max-width: 420px;
+  display: flex; flex-direction: column; gap: 20px;
+}
+.modalHeader { display: flex; align-items: center; justify-content: space-between; }
+.modalHeader h3 { font-size: 1rem; font-weight: 700; color: #fff; margin: 0; }
+.modalClose {
+  background: none; border: none; color: rgba(255,255,255,0.4); cursor: pointer;
+  padding: 4px; display: flex; align-items: center; transition: color 0.2s;
+}
+.modalClose:hover { color: #fff; }
+.field { display: flex; flex-direction: column; gap: 8px; }
+.label { font-size: 0.75rem; font-weight: 600; color: rgba(255,255,255,0.5); letter-spacing: 0.5px; text-transform: uppercase; }
+.input {
+  padding: 10px 14px; background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1); border-radius: 10px;
+  color: #fff; font-size: 0.88rem; outline: none; width: 100%; box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+.input:focus { border-color: rgba(91,124,250,0.5); }
+.input option { background: #0f1220; }
+
+.pctField { display: flex; align-items: center; gap: 8px; }
+.pctField .input { flex: 1; }
+.pctSuffix { font-size: 0.9rem; font-weight: 700; color: rgba(255,255,255,0.4); }
+
+.preview { font-size: 0.72rem; color: rgba(255,255,255,0.4); margin: 0; }
+.preview strong { color: #4ade80; }
+
+.modalActions { display: flex; gap: 10px; justify-content: flex-end; }
+.btnCancel {
+  padding: 9px 18px; background: none; border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 100px; color: rgba(255,255,255,0.5); font-size: 0.82rem; cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+.btnCancel:hover { border-color: rgba(255,255,255,0.25); color: #fff; }
+.btnSave {
+  display: flex; align-items: center; gap: 7px; padding: 9px 20px;
+  background: rgba(91,124,250,0.2); border: 1px solid rgba(91,124,250,0.4);
+  border-radius: 100px; color: #5b7cfa; font-size: 0.82rem; font-weight: 600;
+  cursor: pointer; transition: background 0.2s;
+}
+.btnSave:hover:not(:disabled) { background: rgba(91,124,250,0.3); }
+.btnSave:disabled { opacity: 0.5; cursor: not-allowed; }

@@ -242,6 +242,21 @@
 .clientInput:focus { border-color: rgba(91,124,250,0.5); }
 .clientInput::placeholder { color: rgba(255,255,255,0.2); }
 
+.clientSelect {
+  background: none;
+  border: none;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  outline: none;
+  color: rgba(255,255,255,0.75);
+  font-size: 0.87rem;
+  padding: 4px 0;
+  width: 100%;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.clientSelect:focus { border-color: rgba(91,124,250,0.5); }
+.clientSelect option { background: #0f1220; color: #fff; }
+
 /* Items table */
 .itemsTable {
   border: 1px solid rgba(255,255,255,0.07);

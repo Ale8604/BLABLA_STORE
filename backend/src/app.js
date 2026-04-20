@@ -3,10 +3,13 @@ const express   = require('express');
 const cors      = require('cors');
 const rateLimit = require('express-rate-limit');
 
-const authRoutes    = require('./routes/auth');
-const productRoutes = require('./routes/products');
-const orderRoutes   = require('./routes/orders');
-const bannerRoutes  = require('./routes/banners');
+const authRoutes       = require('./routes/auth');
+const productRoutes    = require('./routes/products');
+const orderRoutes      = require('./routes/orders');
+const bannerRoutes     = require('./routes/banners');
+const sedesRoutes      = require('./routes/sedes');
+const vendedoresRoutes = require('./routes/vendedores');
+const comisionesRoutes = require('./routes/comisiones');
 
 const app  = express();
 const PORT = process.env.PORT || 3001;
@@ -30,10 +33,13 @@ const authLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-app.use('/api/auth', authLimiter, authRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api/orders',   orderRoutes);
-app.use('/api/banners',  bannerRoutes);
+app.use('/api/auth',       authLimiter, authRoutes);
+app.use('/api/products',   productRoutes);
+app.use('/api/orders',     orderRoutes);
+app.use('/api/banners',    bannerRoutes);
+app.use('/api/sedes',      sedesRoutes);
+app.use('/api/vendedores', vendedoresRoutes);
+app.use('/api/comisiones', comisionesRoutes);
 
 app.get('/api/health', (_, res) => res.json({ status: 'ok' }));
 

@@ -6,7 +6,7 @@ const generateInvoiceCode = (id) => {
 };
 
 const create = async (req, res) => {
-  const { items, userId, clientName, clientPhone } = req.body;
+  const { items, userId, clientName, clientPhone, sedeId, vendedorId } = req.body;
 
   if (!items?.length)
     return res.status(400).json({ error: 'El pedido debe tener al menos un producto' });
@@ -23,7 +23,9 @@ const create = async (req, res) => {
 
     const order = await prisma.order.create({
       data: {
-        userId:      userId ?? null,
+        userId:      userId     ?? null,
+        sedeId:      sedeId     ? Number(sedeId)     : null,
+        vendedorId:  vendedorId ? Number(vendedorId) : null,
         clientName:  clientName  || '',
         clientPhone: clientPhone || '',
         total,
@@ -63,8 +65,10 @@ const getAll = async (req, res) => {
     const orders = await prisma.order.findMany({
       where:   status ? { status } : undefined,
       include: {
-        items: true,
-        user:  { select: { email: true, nombre: true, telefono: true } },
+        items:    true,
+        user:     { select: { email: true, nombre: true, telefono: true } },
+        sede:     { select: { id: true, nombre: true } },
+        vendedor: { select: { id: true, nombre: true } },
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -80,8 +84,10 @@ const getOne = async (req, res) => {
     const order = await prisma.order.findUnique({
       where:   { id: Number(req.params.id) },
       include: {
-        items: true,
-        user:  { select: { email: true, nombre: true, telefono: true } },
+        items:    true,
+        user:     { select: { email: true, nombre: true, telefono: true } },
+        sede:     { select: { id: true, nombre: true } },
+        vendedor: { select: { id: true, nombre: true } },
       },
     });
     if (!order) return res.status(404).json({ error: 'Pedido no encontrado' });
@@ -93,7 +99,7 @@ const getOne = async (req, res) => {
 
 const updateStatus = async (req, res) => {
   try {
-    const { status, clientName, clientPhone, clientCedula } = req.body;
+    const { status, clientName, clientPhone, clientCedula, sedeId, vendedorId } = req.body;
     const order = await prisma.order.update({
       where: { id: Number(req.params.id) },
       data:  {
@@ -101,8 +107,15 @@ const updateStatus = async (req, res) => {
         ...(clientName   !== undefined && { clientName   }),
         ...(clientPhone  !== undefined && { clientPhone  }),
         ...(clientCedula !== undefined && { clientCedula }),
+        ...(sedeId     !== undefined   && { sedeId:     sedeId     ? Number(sedeId)     : null }),
+        ...(vendedorId !== undefined   && { vendedorId: vendedorId ? Number(vendedorId) : null }),
       },
-      include: { items: true, user: { select: { email: true, nombre: true } } },
+      include: {
+        items:    true,
+        user:     { select: { email: true, nombre: true } },
+        sede:     { select: { id: true, nombre: true } },
+        vendedor: { select: { id: true, nombre: true } },
+      },
     });
     res.json(order);
   } catch (err) {

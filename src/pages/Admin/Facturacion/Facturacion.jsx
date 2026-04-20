@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaFileInvoiceDollar, FaTimesCircle, FaFilePdf, FaUser, FaPhone, FaIdCard, FaSearch } from 'react-icons/fa';
+import { FaFileInvoiceDollar, FaTimesCircle, FaFilePdf, FaUser, FaPhone, FaIdCard, FaSearch, FaStore, FaUserTie } from 'react-icons/fa';
 import { api } from '../../../lib/api';
 import styles from './Facturacion.module.css';
 
@@ -113,12 +113,20 @@ const Facturacion = () => {
   const [editName,   setEditName]   = useState('');
   const [editPhone,  setEditPhone]  = useState('');
   const [editCedula, setEditCedula] = useState('');
+  const [sedes,      setSedes]      = useState([]);
+  const [vendedores, setVendedores] = useState([]);
+  const [editSedeId,     setEditSedeId]     = useState('');
+  const [editVendedorId, setEditVendedorId] = useState('');
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await api.get('/orders');
-      setOrders(data);
+      const [ordersData, sedesData] = await Promise.all([
+        api.get('/orders'),
+        api.get('/sedes'),
+      ]);
+      setOrders(ordersData);
+      setSedes(sedesData.filter(s => s.activa));
     } finally {
       setLoading(false);
     }
@@ -126,11 +134,20 @@ const Facturacion = () => {
 
   useEffect(() => { load(); }, [load]);
 
+  useEffect(() => {
+    if (!editSedeId) { setVendedores([]); setEditVendedorId(''); return; }
+    api.get(`/vendedores?sedeId=${editSedeId}`)
+      .then(data => setVendedores(data.filter(v => v.activo)));
+    setEditVendedorId('');
+  }, [editSedeId]);
+
   const selectOrder = (order) => {
     setSelected(order);
     setEditName(order.clientName   || order.user?.nombre   || '');
     setEditPhone(order.clientPhone || order.user?.telefono || '');
     setEditCedula(order.clientCedula || order.user?.cedula || '');
+    setEditSedeId(order.sedeId     ? String(order.sedeId)     : '');
+    setEditVendedorId(order.vendedorId ? String(order.vendedorId) : '');
   };
 
   const handleConfirm = async () => {
@@ -142,6 +159,8 @@ const Facturacion = () => {
         clientName:   editName,
         clientPhone:  editPhone,
         clientCedula: editCedula,
+        sedeId:       editSedeId     ? Number(editSedeId)     : null,
+        vendedorId:   editVendedorId ? Number(editVendedorId) : null,
       });
       const merged = { ...selected, ...updated };
       setOrders(prev => prev.map(o => o.id === merged.id ? merged : o));
@@ -275,6 +294,30 @@ const Facturacion = () => {
                       onChange={e => setEditCedula(e.target.value)}
                     />
                   </div>
+                  <div className={styles.clientField}>
+                    <FaStore size={11} className={styles.clientIcon} />
+                    <select
+                      className={styles.clientSelect}
+                      value={editSedeId}
+                      onChange={e => setEditSedeId(e.target.value)}
+                    >
+                      <option value="">— Sede (opcional) —</option>
+                      {sedes.map(s => <option key={s.id} value={s.id}>{s.nombre}</option>)}
+                    </select>
+                  </div>
+                  {editSedeId && (
+                    <div className={styles.clientField}>
+                      <FaUserTie size={11} className={styles.clientIcon} />
+                      <select
+                        className={styles.clientSelect}
+                        value={editVendedorId}
+                        onChange={e => setEditVendedorId(e.target.value)}
+                      >
+                        <option value="">— Vendedor (opcional) —</option>
+                        {vendedores.map(v => <option key={v.id} value={v.id}>{v.nombre}</option>)}
+                      </select>
+                    </div>
+                  )}
                 </div>
 
                 {/* Items */}
