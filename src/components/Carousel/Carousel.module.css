@@ -135,3 +135,20 @@
   background: #5b7cfa;
   transform: scale(1.5);
 }
+
+@media (max-width: 768px) {
+  .stage {
+    gap: 0;
+    padding: 8px 0;
+  }
+
+  .centerBox {
+    width: 100%;
+    border-radius: 14px;
+  }
+
+  .side  { display: none; }
+  .arrow { display: none; }
+
+  .dots { margin-top: 10px; }
+}

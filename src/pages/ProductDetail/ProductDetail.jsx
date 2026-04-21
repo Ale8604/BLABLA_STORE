@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { FaArrowLeft, FaShoppingCart } from 'react-icons/fa';
 import Navbar from '../../components/layout/Navbar/navbar';
 import Footer from '../../components/layout/Footer/Footer';
@@ -27,6 +27,7 @@ const ProductDetail = () => {
   const [selectedRam,   setSelectedRam]   = useState(null);
   const [selectedStore, setSelectedStore] = useState(null);
   const [added,         setAdded]         = useState(false);
+  const [swipeDir,      setSwipeDir]      = useState(1);
 
   useEffect(() => {
     if (product) {
@@ -37,6 +38,23 @@ const ProductDetail = () => {
       setSelectedStore(storageOpts[0] ?? null);
     }
   }, [product?.id]);
+
+  const allImages = variants ? variants.map(v => v.image) : (product?.image ? [product.image] : []);
+
+  const handleDragEnd = (_, info) => {
+    const threshold = 40;
+    if (info.offset.x < -threshold && activeColor < allImages.length - 1) {
+      const next = activeColor + 1;
+      setSwipeDir(1);
+      setActiveColor(next);
+      setActiveImg(allImages[next]);
+    } else if (info.offset.x > threshold && activeColor > 0) {
+      const prev = activeColor - 1;
+      setSwipeDir(-1);
+      setActiveColor(prev);
+      setActiveImg(allImages[prev]);
+    }
+  };
 
   if (!product) return (
     <div className={styles.notFound}>
@@ -74,6 +92,7 @@ const ProductDetail = () => {
     : product.price;
 
   const selectColor = (i) => {
+    setSwipeDir(i > activeColor ? 1 : -1);
     setActiveColor(i);
     if (variants?.[i]) setActiveImg(variants[i].image);
   };
@@ -91,16 +110,53 @@ const ProductDetail = () => {
 
           {/* ── Columna izquierda: imágenes ── */}
           <div className={styles.gallery}>
+            {/* Contenedor drag — sin key para que no se desmonte al cambiar imagen */}
             <motion.div
               className={styles.mainImgBox}
-              key={activeImg}
-              initial={{ opacity: 0, scale: 0.97 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+              drag={allImages.length > 1 ? 'x' : false}
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.18}
+              onDragEnd={handleDragEnd}
+              whileDrag={{ cursor: 'grabbing' }}
+              style={{ touchAction: 'pan-y' }}
             >
-              <img src={activeImg} alt={product.name} className={styles.mainImg} />
+              <AnimatePresence mode="wait" custom={swipeDir}>
+                <motion.img
+                  key={activeImg}
+                  src={activeImg}
+                  alt={product.name}
+                  className={styles.mainImg}
+                  decoding="async"
+                  custom={swipeDir}
+                  variants={{
+                    initial: (dir) => ({ x: dir * 55, opacity: 0 }),
+                    animate: { x: 0, opacity: 1 },
+                    exit:    (dir) => ({ x: -dir * 55, opacity: 0 }),
+                  }}
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                  transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
+                  draggable={false}
+                />
+              </AnimatePresence>
             </motion.div>
 
+            {/* Dots — visibles cuando hay varias imágenes */}
+            {allImages.length > 1 && (
+              <div className={styles.dotsRow}>
+                {allImages.map((_, i) => (
+                  <motion.button
+                    key={i}
+                    className={`${styles.dot} ${activeColor === i ? styles.dotActive : ''}`}
+                    onClick={() => selectColor(i)}
+                    whileTap={{ scale: 0.85 }}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Thumbnails — solo desktop */}
             {variants && variants.length > 1 && (
               <div className={styles.thumbRow}>
                 {variants.map((v, i) => (
@@ -109,7 +165,7 @@ const ProductDetail = () => {
                     className={`${styles.thumb} ${activeColor === i ? styles.thumbActive : ''}`}
                     onClick={() => selectColor(i)}
                   >
-                    <img src={v.image} alt="" />
+                    <img src={v.image} alt="" loading="lazy" decoding="async" />
                   </button>
                 ))}
               </div>
@@ -212,7 +268,8 @@ const ProductDetail = () => {
             <motion.button
               className={`${styles.cartBtn} ${added ? styles.cartBtnAdded : ''}`}
               onClick={handleAddToCart}
-              whileTap={{ scale: 0.97 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 18 }}
             >
               <FaShoppingCart size={16} />
               {added ? '¡Agregado!' : 'Agregar al Carrito'}

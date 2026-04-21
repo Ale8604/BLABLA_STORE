@@ -45,6 +45,7 @@ model Product {
   offerEnd        DateTime?
   active         Boolean  @default(true)
   archived    Boolean  @default(false)
+  draft       Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   orderItems  OrderItem[]

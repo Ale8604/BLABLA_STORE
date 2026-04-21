@@ -93,7 +93,7 @@
 
 .card {
   max-width: 320px;
-  position: relative; /* needed for badge positioning */
+  position: relative;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
   backdrop-filter: blur(12px);
   border-radius: 12px;
@@ -101,6 +101,15 @@
   border: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   flex-direction: column;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .card { padding: 14px; max-width: 100%; border-radius: 10px; }
+  .imageContainer { height: 150px; margin-bottom: 12px; }
+  .productName { font-size: 0.88rem; }
+  .price { font-size: 0.82rem; }
+  .installments { display: none; }
 }
 
 .imageContainer {

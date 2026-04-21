@@ -38,7 +38,7 @@ const ValorCard = ({ v, delay }) => {
   };
 
   return (
-    <motion.div {...fade(delay)}>
+    <motion.div {...fade(delay)} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 20 }}>
       <div
         ref={ref}
         className={styles.valorCard}

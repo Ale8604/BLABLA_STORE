@@ -6,6 +6,7 @@ const adminMiddleware = require('../middleware/adminMiddleware');
 const guard = [authMiddleware, adminMiddleware];
 
 router.post('/',              ctrl.create);
+router.get('/mine',           authMiddleware, ctrl.getMyOrders);
 router.get('/',               ...guard, ctrl.getAll);
 router.get('/:id',            ...guard, ctrl.getOne);
 router.patch('/:id/status',   ...guard, ctrl.updateStatus);

@@ -1,7 +1,7 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaInbox, FaPlusCircle, FaBook, FaFileInvoiceDollar, FaBullhorn, FaUserCircle, FaSignOutAlt, FaCheckCircle, FaTachometerAlt, FaStore, FaPercent } from 'react-icons/fa';
+import { FaInbox, FaPlusCircle, FaBook, FaFileInvoiceDollar, FaBullhorn, FaUserCircle, FaSignOutAlt, FaCheckCircle, FaTachometerAlt, FaStore, FaPercent, FaBars, FaTimes } from 'react-icons/fa';
 import logo from '../../assets/logo.png';
 import styles from './AdminLayout.module.css';
 import { useAuth } from '../../components/context/AuthContext';
@@ -20,8 +20,9 @@ const NAV_ITEMS = [
 const AdminLayout = () => {
   const { logout } = useAuth();
   const navigate   = useNavigate();
-  const [open, setOpen]   = useState(false);
-  const [toast, setToast] = useState(false);
+  const [open, setOpen]       = useState(false);
+  const [toast, setToast]     = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const dropdownRef       = useRef(null);
 
   useEffect(() => {
@@ -58,8 +59,54 @@ const AdminLayout = () => {
       )}
     </AnimatePresence>
 
+    {/* Mobile drawer backdrop */}
+    <AnimatePresence>
+      {menuOpen && (
+        <motion.div
+          className={styles.drawerBackdrop}
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          onClick={() => setMenuOpen(false)}
+        />
+      )}
+    </AnimatePresence>
+
+    {/* Mobile drawer */}
+    <AnimatePresence>
+      {menuOpen && (
+        <motion.div
+          className={styles.drawer}
+          initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }}
+          transition={{ type: 'spring', damping: 28, stiffness: 280 }}
+        >
+          <div className={styles.drawerHeader}>
+            <img src={logo} alt="BlaBla Store" className={styles.logo} />
+            <button className={styles.drawerClose} onClick={() => setMenuOpen(false)}>
+              <FaTimes size={18} />
+            </button>
+          </div>
+          <nav className={styles.drawerNav}>
+            {NAV_ITEMS.map(({ to, icon, label }) => (
+              <NavLink
+                key={to} to={to}
+                className={({ isActive }) => `${styles.navItem} ${isActive ? styles.navItemActive : ''}`}
+                onClick={() => setMenuOpen(false)}
+              >
+                <span className={styles.navIcon}>{icon}</span>
+                <span>{label}</span>
+              </NavLink>
+            ))}
+          </nav>
+        </motion.div>
+      )}
+    </AnimatePresence>
+
     <header className={styles.header}>
       <div className={styles.headerLogo}>
+        {/* Hamburger — mobile only */}
+        <motion.button className={styles.hamburger} onClick={() => setMenuOpen(true)} whileTap={{ scale: 0.9 }}>
+          <FaBars size={20} />
+        </motion.button>
         <img src={logo} alt="BlaBla Store" className={styles.logo} />
         <span className={styles.panelTitle}>PANEL DE CONTROL</span>
       </div>

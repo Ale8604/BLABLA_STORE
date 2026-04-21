@@ -2,19 +2,28 @@ const prisma = require('../lib/prisma');
 
 const getAll = async (req, res) => {
   try {
-    const { brand, condition, minPrice, maxPrice, archived } = req.query;
+    const { brand, condition, minPrice, maxPrice, archived, draft } = req.query;
+
+    let where = {};
+    if (draft === 'true') {
+      where = { draft: true };
+    } else if (archived === 'true') {
+      where = { archived: true, draft: false };
+    } else {
+      where = { archived: false, active: true, draft: false };
+    }
+
+    if (brand)     where.brand     = brand;
+    if (condition) where.condition = condition;
+    if (minPrice || maxPrice) {
+      where.price = {
+        gte: minPrice ? Number(minPrice) : undefined,
+        lte: maxPrice ? Number(maxPrice) : undefined,
+      };
+    }
 
     const products = await prisma.product.findMany({
-      where: {
-        archived:  archived === 'true' ? true : false,
-        active:    archived === 'true' ? undefined : true,
-        brand:     brand     || undefined,
-        condition: condition || undefined,
-        price: {
-          gte: minPrice ? Number(minPrice) : undefined,
-          lte: maxPrice ? Number(maxPrice) : undefined,
-        },
-      },
+      where,
       orderBy: { createdAt: 'desc' },
     });
 
@@ -41,31 +50,45 @@ const getOne = async (req, res) => {
 const create = async (req, res) => {
   console.log('CREATE called, body keys:', Object.keys(req.body));
   try {
-    const { name, price, brand, condition, category, code, stock, description, specs, image, active, entrada, meses, colorVariants, ram, storage } = req.body;
+    const {
+      name, price, brand, condition, category, code, stock,
+      description, specs, image, active, entrada, meses,
+      colorVariants, ram, storage, draft,
+    } = req.body;
 
-    if (!name || !price || !code)
-      return res.status(400).json({ error: 'Nombre, precio y código son requeridos' });
+    const isDraft = !!draft;
 
-    const p       = Number(price);
+    if (!isDraft) {
+      if (!name || !price || !code || !description || !image)
+        return res.status(400).json({ error: 'Nombre, precio, código, descripción e imagen son requeridos para publicar' });
+    }
+
+    const draftCode = `_draft_${Date.now()}_${Math.random().toString(36).slice(2, 5)}`;
+    const p       = Number(price)   || 0;
     const ent     = Number(entrada) || 0;
     const mes     = Number(meses)   || 24;
-    const monthly = Number(((p * (1 - ent / 100)) / mes).toFixed(2));
+    const monthly = p > 0 ? Number(((p * (1 - ent / 100)) / mes).toFixed(2)) : 0;
 
     const product = await prisma.product.create({
       data: {
-        name, brand, condition, category, code,
-        description: description || '',
-        specs:       specs       || '',
+        name:          name          || '',
+        brand:         brand         || '',
+        condition:     condition     || 'Nuevo',
+        category:      category      || 'Teléfonos',
+        code:          (code?.trim()) || draftCode,
+        description:   description   || '',
+        specs:         specs         || '',
         image:         image         || '',
-        colorVariants: colorVariants  || [],
-        ram:           ram            || [],
-        storage:       storage        || [],
+        colorVariants: colorVariants || [],
+        ram:           ram           || [],
+        storage:       storage       || [],
         price:   p,
         stock:   Number(stock) || 0,
         entrada: ent,
         meses:   mes,
         monthly,
-        active:  active ?? true,
+        active:  isDraft ? false : (active ?? true),
+        draft:   isDraft,
       },
     });
 
@@ -96,7 +119,7 @@ const update = async (req, res) => {
       const p   = payload.price   ?? current.price;
       const ent = payload.entrada ?? current.entrada;
       const mes = payload.meses   ?? current.meses;
-      payload.monthly = Number(((p * (1 - ent / 100)) / mes).toFixed(2));
+      payload.monthly = p > 0 ? Number(((p * (1 - ent / 100)) / mes).toFixed(2)) : 0;
     }
 
     const product = await prisma.product.update({ where: { id }, data: payload });
@@ -128,7 +151,10 @@ const archive = async (req, res) => {
 
 const remove = async (req, res) => {
   try {
-    await prisma.product.delete({ where: { id: Number(req.params.id) } });
+    const id = Number(req.params.id);
+    // Delete related order items first to avoid FK constraint
+    await prisma.orderItem.deleteMany({ where: { productId: id } });
+    await prisma.product.delete({ where: { id } });
     res.status(204).send();
   } catch (err) {
     console.error('remove:', err);

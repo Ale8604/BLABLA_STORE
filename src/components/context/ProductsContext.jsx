@@ -1,21 +1,42 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { api } from '../../lib/api';
 
+const CACHE_KEY = 'blabla_products_cache';
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutos
+
+const readCache = () => {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    if (!raw) return null;
+    const { data, ts } = JSON.parse(raw);
+    if (Date.now() - ts > CACHE_TTL) return null;
+    return data;
+  } catch { return null; }
+};
+
+const writeCache = (data) => {
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ data, ts: Date.now() }));
+  } catch {}
+};
+
 const ProductsContext = createContext();
 
 export const ProductsProvider = ({ children }) => {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading]   = useState(true);
+  const cached = readCache();
+  const [products, setProducts] = useState(cached || []);
+  const [loading, setLoading]   = useState(!cached);
   const [error, setError]       = useState(null);
 
   const loadProducts = useCallback(async () => {
     try {
-      setLoading(true);
       const [active, archived] = await Promise.all([
         api.get('/products'),
         api.get('/products?archived=true'),
       ]);
-      setProducts([...active, ...archived]);
+      const all = [...active, ...archived];
+      setProducts(all);
+      writeCache(all);
       setError(null);
     } catch (err) {
       setError(err.message);
@@ -24,38 +45,46 @@ export const ProductsProvider = ({ children }) => {
     }
   }, []);
 
-  useEffect(() => { loadProducts(); }, [loadProducts]);
+  useEffect(() => {
+    // Si hay caché, carga en background sin bloquear la UI
+    if (cached) {
+      loadProducts();
+    } else {
+      setLoading(true);
+      loadProducts();
+    }
+  }, [loadProducts]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const addProduct = async (product) => {
     const created = await api.post('/products', product);
-    setProducts(prev => [created, ...prev]);
+    setProducts(prev => { const next = [created, ...prev]; writeCache(next); return next; });
     return created;
   };
 
   const updateProduct = async (id, changes) => {
     const updated = await api.put(`/products/${id}`, changes);
-    setProducts(prev => prev.map(p => p.id === id ? updated : p));
+    setProducts(prev => { const next = prev.map(p => p.id === id ? updated : p); writeCache(next); return next; });
     return updated;
   };
 
   const setProductOffer = async (id, offerData) => {
     const updated = await api.patch(`/products/${id}/offer`, offerData);
-    setProducts(prev => prev.map(p => p.id === id ? updated : p));
+    setProducts(prev => { const next = prev.map(p => p.id === id ? updated : p); writeCache(next); return next; });
     return updated;
   };
 
   const archiveProduct = async (id) => {
     const updated = await api.patch(`/products/${id}/archive`);
-    setProducts(prev => prev.map(p => p.id === id ? updated : p));
+    setProducts(prev => { const next = prev.map(p => p.id === id ? updated : p); writeCache(next); return next; });
     return updated;
   };
 
   const deleteProduct = async (id) => {
     await api.delete(`/products/${id}`);
-    setProducts(prev => prev.filter(p => p.id !== id));
+    setProducts(prev => { const next = prev.filter(p => p.id !== id); writeCache(next); return next; });
   };
 
-  const activeProducts   = products.filter(p => !p.archived);
+  const activeProducts   = products.filter(p => !p.archived && !p.draft);
   const archivedProducts = products.filter(p =>  p.archived);
 
   return (

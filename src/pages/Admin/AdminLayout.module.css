@@ -241,3 +241,102 @@
   padding: 28px;
   min-height: 600px;
 }
+
+/* ── Hamburger (hidden on desktop) ── */
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  padding: 4px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* ── Mobile drawer ── */
+.drawerBackdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  z-index: 900;
+}
+
+.drawer {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  width: 240px;
+  background: rgba(8, 10, 20, 0.98);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  z-index: 901;
+  flex-direction: column;
+  padding: 0 0 24px;
+}
+
+.drawerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 16px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  margin-bottom: 8px;
+}
+
+.drawerClose {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+}
+
+.drawerNav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 10px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .header {
+    width: 94%;
+    padding: 0.45rem 0.9rem;
+    top: 12px;
+    margin: 12px auto 0;
+  }
+
+  .panelTitle { display: none; }
+
+  .logo { height: 36px; }
+
+  .hamburger { display: flex; }
+
+  .sidebar { display: none; }
+
+  .drawerBackdrop { display: block; }
+
+  .drawer { display: flex; }
+
+  .body {
+    padding: 14px;
+    gap: 0;
+  }
+
+  .content {
+    padding: 18px 14px;
+    border-radius: 14px;
+    min-height: unset;
+  }
+}

@@ -124,4 +124,18 @@ const updateStatus = async (req, res) => {
   }
 };
 
-module.exports = { create, getAll, getOne, updateStatus };
+const getMyOrders = async (req, res) => {
+  try {
+    const orders = await prisma.order.findMany({
+      where:   { userId: req.user.id },
+      include: { items: true },
+      orderBy: { createdAt: 'desc' },
+    });
+    res.json(orders);
+  } catch (err) {
+    console.error('getMyOrders:', err);
+    res.status(500).json({ error: 'Error al obtener pedidos' });
+  }
+};
+
+module.exports = { create, getAll, getOne, updateStatus, getMyOrders };

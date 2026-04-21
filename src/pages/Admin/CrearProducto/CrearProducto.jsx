@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { FaPlus, FaTimes, FaMagic } from 'react-icons/fa';
+import { FaPlus, FaTimes, FaMagic, FaImage, FaTrash } from 'react-icons/fa';
 import { useProducts } from '../../../components/context/ProductsContext';
+import { api } from '../../../lib/api';
 import styles from './CrearProducto.module.css';
 
 const CATEGORIAS  = ['Teléfonos', 'Accesorios', 'Repuestos'];
@@ -12,13 +13,20 @@ const MARCAS = [
   'Infinix', 'ZTE', 'Asus', 'BlackBerry', 'Otra',
 ];
 const CONDICIONES = ['Nuevo', 'Reacondicionado'];
-
 const SLOTS = 6;
+
+const REQUIRED_FIELDS = [
+  { key: 'name',        label: 'Nombre',      test: f => !!f.name?.trim() },
+  { key: 'price',       label: 'Precio',      test: f => Number(f.price) > 0 },
+  { key: 'code',        label: 'Código',      test: f => !!f.code?.trim() },
+  { key: 'description', label: 'Descripción', test: f => !!f.description?.trim() },
+  { key: 'images',      label: 'Imagen',      test: f => f.images?.some(Boolean) },
+];
 
 const emptyForm = {
   name: '', price: '', code: '', stock: '',
   description: '', specs: '',
-  category: 'Teléfonos', brand: 'Iphone',
+  category: 'Teléfonos', brand: 'Apple (iPhone)',
   active: true, condition: 'Nuevo',
   entrada: 30, meses: 24,
   ram: [], storage: [],
@@ -54,29 +62,65 @@ const blobToBase64 = (url) => {
     }));
 };
 
+const getDraftMissing = (draft) =>
+  REQUIRED_FIELDS
+    .filter(r => !r.test({
+      name:        draft.name,
+      price:       draft.price,
+      code:        draft.code?.startsWith('_draft_') ? '' : draft.code,
+      description: draft.description,
+      images:      [draft.image].filter(Boolean),
+    }))
+    .map(r => r.label);
+
 const CrearProducto = () => {
-  const { addProduct, updateProduct, products } = useProducts();
+  const { addProduct, updateProduct, loadProducts } = useProducts();
   const navigate   = useNavigate();
   const [params]   = useSearchParams();
   const editId     = params.get('edit');
 
-  const [form, setForm]         = useState(emptyForm);
-  const [removing, setRemoving] = useState(Array(SLOTS).fill(false));
-  const dragIndex = useRef(null);
-  const [saving, setSaving]     = useState(false);
-  const [apiError, setApiError] = useState('');
+  const [form, setForm]                   = useState(emptyForm);
+  const [removing, setRemoving]           = useState(Array(SLOTS).fill(false));
+  const [saving, setSaving]               = useState(false);
+  const [apiError, setApiError]           = useState('');
+  const [missingFields, setMissingFields] = useState([]);
+  const [drafts, setDrafts]               = useState([]);
+  const [loadingDrafts, setLoadingDrafts] = useState(false);
+  const [isEditingDraft, setIsEditingDraft] = useState(false);
+  const [localDraft, setLocalDraft]       = useState(null);
 
-  // Restaurar draft al montar (solo si no estamos editando un producto existente)
-  useEffect(() => {
-    if (!editId) {
-      const draft = localStorage.getItem('crearProducto_draft');
-      if (draft) {
-        try { setForm(prev => ({ ...prev, ...JSON.parse(draft) })); } catch {}
-      }
-    }
+  const dragIndex    = useRef(null);
+  const resolvedRef  = useRef(false);
+  const formRef      = useRef(form);
+  const editIdRef    = useRef(editId);
+  const formCardRef  = useRef(null);
+
+  useEffect(() => { formRef.current  = form;   }, [form]);
+  useEffect(() => { editIdRef.current = editId; }, [editId]);
+
+  // Load DB drafts
+  const loadDrafts = useCallback(async () => {
+    setLoadingDrafts(true);
+    try {
+      const data = await api.get('/products?draft=true');
+      setDrafts(data);
+    } catch {}
+    finally { setLoadingDrafts(false); }
   }, []);
 
-  // Guardar draft en cada cambio (sin imágenes — los blob URLs no sobreviven el refresh)
+  useEffect(() => { loadDrafts(); }, [loadDrafts]);
+
+  // Detect local draft from localStorage (only for new product form)
+  useEffect(() => {
+    if (editId) return;
+    try {
+      const saved = JSON.parse(localStorage.getItem('crearProducto_draft') || 'null');
+      if (saved && (saved.name?.trim() || Number(saved.price) > 0 || saved.code?.trim()))
+        setLocalDraft(saved);
+    } catch {}
+  }, [editId]);
+
+  // Auto-save text fields to localStorage on every change
   useEffect(() => {
     if (!editId) {
       const { images, ...textFields } = form;
@@ -84,31 +128,88 @@ const CrearProducto = () => {
     }
   }, [form, editId]);
 
+  // Load product when editing (supports both regular and draft products)
   useEffect(() => {
-    if (editId) {
-      const found = products.find(p => p.id === Number(editId));
-      if (found) {
-        setForm({
-          name: found.name, price: found.price, code: found.code,
-          stock: found.stock, description: found.description,
-          specs: found.specs, category: found.category || 'Teléfonos',
-          brand: found.brand, active: found.active,
-          condition: found.condition,
-          entrada: found.entrada ?? 30, meses: found.meses ?? 24,
-          ram: found.ram || [], storage: found.storage || [],
-          ramInput: '', storageInput: '',
-          images: (found.colorVariants?.length
-            ? found.colorVariants.map(v => v.image)
-            : [found.image]).concat(Array(SLOTS).fill(null)).slice(0, SLOTS),
-          colors: (found.colorVariants?.length
-            ? found.colorVariants.map(v => v.color)
-            : ['#000000']).concat(Array(SLOTS).fill('#000000')).slice(0, SLOTS),
-        });
-      }
-    }
-  }, [editId, products]);
+    if (!editId) return;
+    api.get(`/products/${editId}`).then(found => {
+      if (!found) return;
+      setIsEditingDraft(!!found.draft);
+      setForm({
+        name:        found.name,
+        price:       found.price,
+        // Clear auto-generated codes so user is required to fill a real one
+        code:        found.code?.startsWith('_draft_') ? '' : found.code,
+        stock:       found.stock,
+        description: found.description,
+        specs:       found.specs,
+        category:    found.category || 'Teléfonos',
+        brand:       found.brand    || 'Apple (iPhone)',
+        active:      found.draft ? true : found.active,
+        condition:   found.condition,
+        entrada:     found.entrada ?? 30,
+        meses:       found.meses   ?? 24,
+        ram:         found.ram     || [],
+        storage:     found.storage || [],
+        ramInput:    '',
+        storageInput: '',
+        images: (found.colorVariants?.length
+          ? found.colorVariants.map(v => v.image)
+          : [found.image]).concat(Array(SLOTS).fill(null)).slice(0, SLOTS),
+        colors: (found.colorVariants?.length
+          ? found.colorVariants.map(v => v.color)
+          : ['#000000']).concat(Array(SLOTS).fill('#000000')).slice(0, SLOTS),
+      });
+    }).catch(() => {});
+  }, [editId]);
+
+  // Auto-save to DB on unmount if form has data (new product only)
+  useEffect(() => {
+    return () => {
+      if (resolvedRef.current || editIdRef.current) return;
+      const f = formRef.current;
+      const hasData = !!(f.name?.trim() || Number(f.price) > 0 || f.code?.trim());
+      if (!hasData) return;
+
+      const token = localStorage.getItem('token');
+      const BASE  = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+      fetch(`${BASE}/products`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          name:        f.name        || 'Sin nombre',
+          price:       Number(f.price)   || 0,
+          code:        `_draft_${Date.now()}_${Math.random().toString(36).slice(2, 5)}`,
+          stock:       Number(f.stock)   || 0,
+          description: f.description || '',
+          specs:       f.specs       || '',
+          category:    f.category    || 'Teléfonos',
+          brand:       f.brand       || 'Apple (iPhone)',
+          condition:   f.condition   || 'Nuevo',
+          active:      false,
+          draft:       true,
+          entrada:     Number(f.entrada) || 30,
+          meses:       Number(f.meses)   || 24,
+          monthly:     0,
+          ram:         f.ram     || [],
+          storage:     f.storage || [],
+        }),
+        keepalive: true,
+      }).then(() => localStorage.removeItem('crearProducto_draft')).catch(() => {});
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const set = (field, value) => setForm(prev => ({ ...prev, [field]: value }));
+
+  const buildColorVariants = async () =>
+    await Promise.all(
+      form.images
+        .map((img, i) => img ? { color: form.colors[i], image: img } : null)
+        .filter(Boolean)
+        .map(async v => ({ color: v.color, image: await blobToBase64(v.image) }))
+    );
 
   const handleImageSlot = async (index, file) => {
     const updated = [...form.images];
@@ -119,21 +220,19 @@ const CrearProducto = () => {
   };
 
   const handleConfirm = async () => {
-    if (!form.name || !form.price || !form.code) {
-      setApiError('Nombre, precio y código son obligatorios.');
+    const missing = REQUIRED_FIELDS.filter(r => !r.test(form)).map(r => r.key);
+    if (missing.length > 0) {
+      setMissingFields(missing);
+      const labels = REQUIRED_FIELDS.filter(r => missing.includes(r.key)).map(r => r.label);
+      setApiError(`Campos requeridos para publicar: ${labels.join(', ')}`);
       return;
     }
+    setMissingFields([]);
     setSaving(true);
     setApiError('');
     try {
-      const colorVariants = await Promise.all(
-        form.images
-          .map((img, i) => img ? { color: form.colors[i], image: img } : null)
-          .filter(Boolean)
-          .map(async v => ({ color: v.color, image: await blobToBase64(v.image) }))
-      );
-      const image = colorVariants[0]?.image || '';
-
+      const colorVariants = await buildColorVariants();
+      const image         = colorVariants[0]?.image || '';
       const payload = {
         name:      form.name,
         price:     Number(form.price),
@@ -152,13 +251,22 @@ const CrearProducto = () => {
         entrada: Number(form.entrada),
         meses:   Number(form.meses),
         monthly: Number(((Number(form.price) * (1 - Number(form.entrada) / 100)) / Number(form.meses)).toFixed(2)),
+        draft:   false,
       };
 
       if (editId) {
-        await updateProduct(Number(editId), payload);
+        await api.put(`/products/${editId}`, payload);
+        if (isEditingDraft) {
+          await loadProducts();
+          await loadDrafts();
+        } else {
+          await updateProduct(Number(editId), payload);
+        }
       } else {
         await addProduct(payload);
       }
+
+      resolvedRef.current = true;
       localStorage.removeItem('crearProducto_draft');
       navigate('/admin/inventario');
     } catch (err) {
@@ -166,6 +274,72 @@ const CrearProducto = () => {
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleSaveDraft = async () => {
+    setSaving(true);
+    setApiError('');
+    try {
+      const colorVariants = await buildColorVariants();
+      const image         = colorVariants[0]?.image || '';
+      const payload = {
+        name:        form.name        || 'Sin nombre',
+        price:       Number(form.price)   || 0,
+        stock:       Number(form.stock)   || 0,
+        description: form.description || '',
+        specs:       form.specs       || '',
+        category:    form.category,
+        brand:       form.brand,
+        condition:   form.condition,
+        active:      false,
+        image,
+        colorVariants,
+        ram:         form.ram,
+        storage:     form.storage,
+        entrada:     Number(form.entrada),
+        meses:       Number(form.meses),
+        monthly:     0,
+        draft:       true,
+      };
+
+      if (editId) {
+        await api.put(`/products/${editId}`, payload);
+        await loadDrafts();
+      } else {
+        // Use form code if user filled it; otherwise auto-generate
+        const code = form.code?.trim() || `_draft_${Date.now()}_${Math.random().toString(36).slice(2, 5)}`;
+        const created = await api.post('/products', { ...payload, code });
+        resolvedRef.current = true;
+        localStorage.removeItem('crearProducto_draft');
+        setLocalDraft(null);
+        await loadDrafts();
+        navigate(`/admin/crear?edit=${created.id}`);
+      }
+    } catch (err) {
+      setApiError(err.message || 'Error al guardar el borrador.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDeleteDraft = async (id) => {
+    try {
+      await api.delete(`/products/${id}`);
+      setDrafts(prev => prev.filter(d => d.id !== id));
+    } catch (err) {
+      setApiError(err.message || 'Error al eliminar el borrador.');
+    }
+  };
+
+  const handleResumeLocalDraft = () => {
+    setForm(prev => ({ ...prev, ...localDraft }));
+    setLocalDraft(null);
+  };
+
+  const handleDiscardLocalDraft = () => {
+    localStorage.removeItem('crearProducto_draft');
+    setLocalDraft(null);
+    setForm(emptyForm);
   };
 
   const handleRemoveBg = async (index, e) => {
@@ -222,10 +396,10 @@ const CrearProducto = () => {
     const from = dragIndex.current;
     if (from === null || from === i) return;
     setForm(prev => {
-      const imgs   = [...prev.images];
-      const cols   = [...prev.colors];
-      [imgs[from],   imgs[i]]   = [imgs[i],   imgs[from]];
-      [cols[from],   cols[i]]   = [cols[i],   cols[from]];
+      const imgs = [...prev.images];
+      const cols = [...prev.colors];
+      [imgs[from], imgs[i]] = [imgs[i], imgs[from]];
+      [cols[from], cols[i]] = [cols[i], cols[from]];
       return { ...prev, images: imgs, colors: cols };
     });
     dragIndex.current = null;
@@ -234,19 +408,41 @@ const CrearProducto = () => {
   const handleClear = () => {
     setForm(emptyForm);
     setApiError('');
+    setMissingFields([]);
+    resolvedRef.current = true;
     localStorage.removeItem('crearProducto_draft');
+    setLocalDraft(null);
   };
+
+  const err = (key) => missingFields.includes(key) ? ` ${styles.inputError}` : '';
+
+  const visibleSlots = Math.min(SLOTS, Math.max(3, form.images.filter(Boolean).length + 1));
 
   return (
     <div className={styles.wrapper}>
       <h2 className={styles.pageTitle}>{editId ? 'Editar Producto' : 'Crear Producto'}</h2>
 
-      <div className={styles.card}>
-        <h3 className={styles.cardTitle}>{editId ? 'Editar Producto' : 'Nuevo Producto'}</h3>
+      {/* Local draft banner */}
+      {localDraft && !editId && (
+        <div className={styles.localDraftBanner}>
+          <span className={styles.localDraftText}>Tienes un borrador sin guardar</span>
+          <div className={styles.localDraftActions}>
+            <button className={styles.localDraftResume} onClick={handleResumeLocalDraft}>Retomar</button>
+            <button className={styles.localDraftDiscard} onClick={handleDiscardLocalDraft}>Descartar</button>
+          </div>
+        </div>
+      )}
+
+      <div className={styles.card} ref={formCardRef}>
+        <h3 className={styles.cardTitle}>
+          {editId
+            ? (isEditingDraft ? 'Completar Borrador' : 'Editar Producto')
+            : 'Nuevo Producto'}
+        </h3>
 
         {/* Imágenes */}
-        <div className={styles.imageRow}>
-          {form.images.slice(0, Math.min(SLOTS, Math.max(3, form.images.filter(Boolean).length + 1))).map((img, i) => (
+        <div className={`${styles.imageRow}${err('images')}`}>
+          {form.images.slice(0, visibleSlots).map((img, i) => (
             <div
               key={i}
               className={styles.imageSlotWrapper}
@@ -288,7 +484,7 @@ const CrearProducto = () => {
                   </>
                 ) : (
                   <div className={styles.imagePlaceholder}>
-                    {i < Math.min(SLOTS, Math.max(3, form.images.filter(Boolean).length + 1)) - 1 ? (
+                    {i < visibleSlots - 1 ? (
                       <span className={styles.placeholderText}>Foto del producto</span>
                     ) : (
                       <>
@@ -322,15 +518,31 @@ const CrearProducto = () => {
         <div className={styles.fieldsGrid}>
           <div className={styles.fieldGroup}>
             <label className={styles.label}>Nombre Del Producto</label>
-            <input className={styles.input} placeholder="Ingresar Nombre" value={form.name} onChange={e => set('name', e.target.value)} />
+            <input
+              className={`${styles.input}${err('name')}`}
+              placeholder="Ingresar Nombre"
+              value={form.name}
+              onChange={e => set('name', e.target.value)}
+            />
           </div>
           <div className={styles.fieldGroup}>
             <label className={styles.label}>Precio ($)</label>
-            <input className={styles.input} type="number" placeholder="0.00$" value={form.price} onChange={e => set('price', e.target.value)} />
+            <input
+              className={`${styles.input}${err('price')}`}
+              type="number"
+              placeholder="0.00$"
+              value={form.price}
+              onChange={e => set('price', e.target.value)}
+            />
           </div>
           <div className={styles.fieldGroup}>
             <label className={styles.label}>Codigo</label>
-            <input className={styles.input} placeholder="Ingresar Código" value={form.code} onChange={e => set('code', e.target.value)} />
+            <input
+              className={`${styles.input}${err('code')}`}
+              placeholder="Ingresar Código"
+              value={form.code}
+              onChange={e => set('code', e.target.value)}
+            />
           </div>
         </div>
 
@@ -361,7 +573,11 @@ const CrearProducto = () => {
         <div className={styles.textareaRow}>
           <div className={styles.fieldGroup} style={{ flex: 1 }}>
             <label className={styles.label}>Descripción Breve</label>
-            <textarea className={styles.textarea} value={form.description} onChange={e => set('description', e.target.value)} />
+            <textarea
+              className={`${styles.textarea}${err('description')}`}
+              value={form.description}
+              onChange={e => set('description', e.target.value)}
+            />
           </div>
           <div className={styles.fieldGroup} style={{ flex: 1 }}>
             <label className={styles.label}>Detalles y Especificaciones</label>
@@ -436,11 +652,72 @@ const CrearProducto = () => {
         {/* Acciones */}
         <div className={styles.actions}>
           <button className={styles.confirmBtn} onClick={handleConfirm} disabled={saving}>
-            {saving ? 'Guardando…' : 'Confirmar'}
+            {saving ? 'Guardando…' : 'Publicar'}
           </button>
-          <button className={styles.clearBtn} onClick={handleClear} disabled={saving}>Limpiar Todo</button>
+          <button className={styles.draftBtn} onClick={handleSaveDraft} disabled={saving}>
+            Guardar borrador
+          </button>
+          <button className={styles.clearBtn} onClick={handleClear} disabled={saving}>
+            Limpiar
+          </button>
         </div>
       </div>
+
+      {/* ── Borradores ── */}
+      {(drafts.length > 0 || loadingDrafts) && (
+        <div className={styles.borradoresSection}>
+          <div className={styles.borradoresHeader}>
+            <h3 className={styles.borradoresTitle}>BORRADORES</h3>
+            {drafts.length > 0 && (
+              <span className={styles.borradoresBadge}>
+                {drafts.length} pendiente{drafts.length !== 1 ? 's' : ''}
+              </span>
+            )}
+          </div>
+          {loadingDrafts ? (
+            <div className={styles.draftLoading}>Cargando borradores…</div>
+          ) : (
+            <div className={styles.borradoresGrid}>
+              {drafts.map(draft => {
+                const missing = getDraftMissing(draft);
+                return (
+                  <div key={draft.id} className={styles.draftCard}>
+                    {draft.image
+                      ? <img src={draft.image} alt="" className={styles.draftThumb} />
+                      : <div className={styles.draftThumbEmpty}><FaImage size={16} /></div>
+                    }
+                    <div className={styles.draftInfo}>
+                      <span className={styles.draftName}>
+                        {draft.name && !draft.name.startsWith('_') ? draft.name : 'Sin nombre'}
+                      </span>
+                      {missing.length > 0 && (
+                        <span className={styles.draftMissing}>Falta: {missing.join(', ')}</span>
+                      )}
+                    </div>
+                    <div className={styles.draftActions}>
+                      <button
+                        className={styles.draftEditBtn}
+                        onClick={() => {
+                          navigate(`/admin/crear?edit=${draft.id}`);
+                          setTimeout(() => formCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+                        }}
+                      >
+                        Continuar
+                      </button>
+                      <button
+                        className={styles.draftDeleteBtn}
+                        onClick={() => handleDeleteDraft(draft.id)}
+                      >
+                        <FaTrash size={11} />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

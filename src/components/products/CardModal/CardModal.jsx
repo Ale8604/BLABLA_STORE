@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
@@ -13,6 +14,12 @@ const CardModal = () => {
   const [isOrderSent, setIsOrderSent]     = useState(false);
   const [invoiceCode, setInvoiceCode]     = useState('');
   const [showAuthPopup, setShowAuthPopup] = useState(false);
+  const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches;
+
+  useEffect(() => {
+    document.body.style.overflow = isCartOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [isCartOpen]);
 
   const sendOrder = async () => {
     const message = cart.map(item => `• ${item.name} (x${item.quantity}) - $${item.price}`).join('\n');
@@ -69,7 +76,7 @@ const CardModal = () => {
   };
 
 
-  return (
+  return createPortal(
     <AnimatePresence>
       {isCartOpen && (
         <motion.div
@@ -83,11 +90,12 @@ const CardModal = () => {
           <motion.div
             className={styles.modal}
             onClick={(e) => e.stopPropagation()}
-            initial={{ y: -16, opacity: 0, scale: 0.95 }}
+            initial={{ y: isMobile ? 60 : -16, opacity: 0, scale: isMobile ? 1 : 0.95 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
-            exit={{ y: -16, opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+            exit={{ y: isMobile ? 60 : -16, opacity: 0, scale: isMobile ? 1 : 0.95 }}
+            transition={isMobile ? { type: 'spring', damping: 28, stiffness: 300 } : { duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
           >
+            <div className={styles.sheetHandle} />
             <div className={styles.modalHeader}>
               <h2 className={styles.title}>CARRITO</h2>
               <button className={styles.closeBtn} onClick={handleClose} aria-label="Cerrar carrito">
@@ -119,7 +127,7 @@ const CardModal = () => {
                 <div className={styles.itemList}>
                   {cart.map((item) => (
                     <div key={item.id} className={styles.cartItem}>
-                      <img src={item.image} alt={item.name} className={styles.itemImg} />
+                      <img src={item.image} alt={item.name} className={styles.itemImg} loading="lazy" decoding="async" />
                       <div className={styles.itemInfo}>
                         <h4>{item.name}</h4>
                         {item.specs && <p className={styles.itemSpecs}>{item.specs}</p>}
@@ -177,7 +185,8 @@ const CardModal = () => {
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 };
 

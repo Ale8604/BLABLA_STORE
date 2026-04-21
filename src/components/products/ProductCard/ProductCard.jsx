@@ -23,11 +23,13 @@ const ProductCard = ({ id, name, price, monthly, meses, colorVariants, image, di
   const displayPrice   = offerActive ? Math.round(price * (1 - discountPercent / 100)) : price;
 
   return (
-    <div
+    <motion.div
       className={styles.card}
       onClick={() => navigate(`/producto/${id}`)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      whileTap={{ scale: 0.96 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 20 }}
     >
       {variants && (
         <div className={styles.colorSelectors}>
@@ -52,6 +54,8 @@ const ProductCard = ({ id, name, price, monthly, meses, colorVariants, image, di
             key={activeImage}
             src={activeImage}
             alt={name}
+            loading="lazy"
+            decoding="async"
             className={styles.productImage}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -83,7 +87,7 @@ const ProductCard = ({ id, name, price, monthly, meses, colorVariants, image, di
           </motion.span>
         </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

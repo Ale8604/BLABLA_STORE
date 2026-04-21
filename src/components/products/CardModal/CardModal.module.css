@@ -13,14 +13,14 @@
 
 .modal {
   width: 380px;
-  background: rgba(255, 255, 255, 0.08); /* Fondo transparente */
-  backdrop-filter: blur(25px); /* Efecto vidrio */
-  -webkit-backdrop-filter: blur(25px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(10, 13, 22, 0.92);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 20px;
   padding: 25px;
   color: white;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 16px 60px rgba(0, 0, 0, 0.8);
   position: relative;
   display: flex;
   flex-direction: column;
@@ -297,6 +297,44 @@
 }
 
 .authDismiss:hover { color: rgba(255, 255, 255, 0.6); }
+
+/* ── Sheet handle (mobile only) ── */
+.sheetHandle {
+  display: none;
+  width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 0 auto 14px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .sheetHandle { display: block; }
+}
+
+/* ── Mobile: cart becomes a bottom sheet ── */
+@media (max-width: 768px) {
+  .overlay {
+    padding: 0;
+    justify-content: center;
+    align-items: flex-end;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+
+  .modal {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 24px 24px 0 0;
+    border-bottom: none;
+    padding: 20px 20px env(safe-area-inset-bottom, 20px);
+    max-height: 90vh;
+    height: auto;
+    overflow-y: auto;
+  }
+}
 
 .emptyCart {
   display: flex;

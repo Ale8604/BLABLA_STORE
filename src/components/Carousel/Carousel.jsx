@@ -70,8 +70,19 @@ const Carousel = () => {
           </div>
         )}
 
-        {/* Centro con animación 3D */}
-        <div className={styles.centerBox}>
+        {/* Centro con animación 3D + swipe */}
+        <motion.div
+          className={styles.centerBox}
+          drag={total > 1 ? 'x' : false}
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={0.15}
+          onDragEnd={(_, info) => {
+            if (info.offset.x < -40) goNext();
+            else if (info.offset.x > 40) goPrev();
+          }}
+          whileDrag={{ cursor: 'grabbing' }}
+          style={{ touchAction: 'pan-y' }}
+        >
           <AnimatePresence mode="popLayout" custom={direction}>
             <motion.div
               key={current}
@@ -87,13 +98,14 @@ const Carousel = () => {
                 src={activeBanners[current].image}
                 alt={activeBanners[current].title || ''}
                 className={styles.image}
+                draggable={false}
               />
               {activeBanners[current].title && (
                 <div className={styles.caption}>{activeBanners[current].title}</div>
               )}
             </motion.div>
           </AnimatePresence>
-        </div>
+        </motion.div>
 
         {/* Lateral derecho — rotado en Y */}
         {total > 1 && (

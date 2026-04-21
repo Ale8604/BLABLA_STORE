@@ -78,3 +78,20 @@
   line-height: 1.6;
   margin: 0;
 }
+
+@media (max-width: 768px) {
+  .footer { padding: 8px 4%; margin-top: 40px; }
+
+  .inner {
+    flex-direction: column;
+    gap: 20px;
+    padding: 24px 20px;
+    text-align: center;
+  }
+
+  .address {
+    max-width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+}
