@@ -14,12 +14,14 @@ const comisionesRoutes = require('./routes/comisiones');
 const app  = express();
 const PORT = process.env.PORT || 3001;
 
-const allowedOrigins = [
-  'http://localhost:5173',
-  'https://blabla-store-e933-glzfm3oyw.vercel.app',
-];
 app.use(cors({
-  origin: (origin, cb) => cb(null, !origin || allowedOrigins.includes(origin)),
+  origin: (origin, cb) => {
+    if (!origin) return cb(null, true);
+    const allowed =
+      origin === 'http://localhost:5173' ||
+      /^https:\/\/blabla-store[a-z0-9-]*\.vercel\.app$/.test(origin);
+    cb(null, allowed);
+  },
   credentials: true,
 }));
 app.use(express.json({ limit: '25mb' }));
