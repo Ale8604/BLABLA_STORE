@@ -85,6 +85,15 @@ const CrearProducto = () => {
   const formRef      = useRef(form);
   const editIdRef    = useRef(editId);
   const formCardRef  = useRef(null);
+  const workerRef    = useRef(null);
+
+  useEffect(() => {
+    workerRef.current = new Worker(
+      new URL('../../workers/removeBg.worker.js', import.meta.url),
+      { type: 'module' }
+    );
+    return () => workerRef.current?.terminate();
+  }, []);
 
   useEffect(() => { formRef.current  = form;   }, [form]);
   useEffect(() => { editIdRef.current = editId; }, [editId]);
@@ -337,12 +346,23 @@ const CrearProducto = () => {
     e.preventDefault();
     e.stopPropagation();
     const imgUrl = form.images[index];
-    if (!imgUrl) return;
+    if (!imgUrl || !workerRef.current) return;
     setRemoving(prev => { const u = [...prev]; u[index] = true; return u; });
     try {
-      const { removeBackground } = await import('@imgly/background-removal');
-      const blob   = await removeBackground(imgUrl, { model: 'small', debug: false });
-      const newUrl = URL.createObjectURL(blob);
+      const res      = await fetch(imgUrl);
+      const blob     = await res.blob();
+      const buffer   = await blob.arrayBuffer();
+
+      const result = await new Promise((resolve, reject) => {
+        const handler = ({ data }) => {
+          workerRef.current.removeEventListener('message', handler);
+          data.ok ? resolve(data) : reject(new Error(data.error));
+        };
+        workerRef.current.addEventListener('message', handler);
+        workerRef.current.postMessage({ buffer, mimeType: blob.type }, [buffer]);
+      });
+
+      const newUrl = URL.createObjectURL(new Blob([result.buffer], { type: result.type }));
       setForm(prev => {
         const imgs = [...prev.images];
         imgs[index] = newUrl;
