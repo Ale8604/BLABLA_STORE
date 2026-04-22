@@ -2,16 +2,8 @@ import { useState, useMemo } from 'react';
 import { FaPlus, FaTimes, FaToggleOn, FaToggleOff, FaTrash, FaTag, FaTimesCircle } from 'react-icons/fa';
 import { useBanners } from '../../../components/context/BannersContext';
 import { useProducts } from '../../../components/context/ProductsContext';
+import { uploadImage } from '../../../lib/supabase';
 import styles from './Publicidad.module.css';
-
-const blobToBase64 = (url) => {
-  if (!url || !url.startsWith('blob:')) return Promise.resolve(url);
-  return fetch(url).then(r => r.blob()).then(blob => new Promise(resolve => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve(reader.result);
-    reader.readAsDataURL(blob);
-  }));
-};
 
 const isOfferActive = (p) => {
   if (!p.discountPercent) return false;
@@ -54,7 +46,7 @@ const Publicidad = () => {
     if (!preview) { setError('Seleccioná una imagen.'); return; }
     setSaving(true); setError('');
     try {
-      const image = await blobToBase64(preview);
+      const image = await uploadImage(preview);
       await addBanner({ image, title, active: true, order: banners.length });
       setPreview(null); setTitle('');
     } catch (err) { setError(err.message); }

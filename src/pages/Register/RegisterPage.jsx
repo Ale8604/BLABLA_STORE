@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaUser, FaIdCard, FaPhone, FaMapMarkerAlt, FaEnvelope, FaLock, FaEye, FaEyeSlash, FaCheckCircle } from 'react-icons/fa';
 import { useAuth } from '../../components/context/AuthContext';
+import { api } from '../../lib/api';
 import logo from '../../assets/logo.png';
 import styles from './RegisterPage.module.css';
 
@@ -38,13 +39,7 @@ const RegisterPage = () => {
     setError('');
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:3001/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Error al crear la cuenta');
+      const data = await api.post('/auth/register', form);
       localStorage.setItem('token', data.token);
       await login(form.email, form.password);
       setForm(EMPTY);
