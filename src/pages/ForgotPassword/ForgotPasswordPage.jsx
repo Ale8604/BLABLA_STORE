@@ -7,6 +7,7 @@ import {
 } from 'react-icons/fa';
 import logo from '../../assets/logo.png';
 import styles from './ForgotPasswordPage.module.css';
+import { api } from '../../lib/api';
 
 const Field = ({ icon: Icon, children }) => (
   <div className={styles.field}>
@@ -36,13 +37,7 @@ const ForgotPasswordPage = () => {
     setError('');
     setLoading(true);
     try {
-      const res  = await fetch('http://localhost:3001/api/auth/find-account', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: emailInput }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
+      const data = await api.post('/auth/find-account', { email: emailInput });
       setUserData(data);
       setStep(STEP_FORM);
     } catch (err) {
@@ -59,13 +54,7 @@ const ForgotPasswordPage = () => {
     setError('');
     setLoading(true);
     try {
-      const res  = await fetch('http://localhost:3001/api/auth/reset-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: userData.email, cedula: userData.cedula, password }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
+      await api.post('/auth/reset-password', { email: userData.email, cedula: userData.cedula, password });
       setStep(STEP_DONE);
     } catch (err) {
       setError(err.message);
