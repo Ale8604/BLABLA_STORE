@@ -354,6 +354,10 @@
   .navIcons { gap: 0.8rem; }
 
   .searchForm { margin: 0 6px; }
+
+  .logoHidden { display: none; }
+
+  .hiddenOnMobile { display: none !important; }
 }
 
 /* ── Toast ── */

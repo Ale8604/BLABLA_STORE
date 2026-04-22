@@ -126,7 +126,7 @@ const Navbar = () => {
     </AnimatePresence>
 
     <nav className={styles.navContainer}>
-      <div className={styles.logoWrapper}>
+      <div className={`${styles.logoWrapper} ${searchOpen ? styles.logoHidden : ''}`}>
         <Link to="/"><img src={logo} alt="BlaBla Store" className={styles.logo} /></Link>
       </div>
 
@@ -196,9 +196,9 @@ const Navbar = () => {
       )}
 
       <div className={styles.navIcons}>
-        {/* Hamburger — mobile only */}
+        {/* Hamburger — mobile only, hidden when search open */}
         <motion.button
-          className={styles.hamburger}
+          className={`${styles.hamburger} ${searchOpen ? styles.hiddenOnMobile : ''}`}
           onClick={() => setMenuOpen(p => !p)}
           whileTap={{ scale: 0.9 }}
         >
@@ -224,16 +224,16 @@ const Navbar = () => {
           {searchOpen ? <FaTimes size={22} /> : <FaSearch size={20} />}
         </button>
 
-        {/* Cart */}
-        <button className={styles.iconBtn} onClick={toggleCart}>
+        {/* Cart — hidden on mobile when search open */}
+        <button className={`${styles.iconBtn} ${searchOpen ? styles.hiddenOnMobile : ''}`} onClick={toggleCart}>
           <div className={styles.cartWrapper}>
             <FaShoppingCart size={25} />
             {cartCount > 0 && <span className={styles.cartBadge}>{cartCount}</span>}
           </div>
         </button>
 
-        {/* User dropdown */}
-        <div className={styles.userWrapper} ref={dropdownRef}>
+        {/* User dropdown — hidden on mobile when search open */}
+        <div className={`${styles.userWrapper} ${searchOpen ? styles.hiddenOnMobile : ''}`} ref={dropdownRef}>
           <button
             className={`${styles.iconBtn} ${open ? styles.iconBtnActive : ''}`}
             onClick={() => setOpen(p => !p)}
