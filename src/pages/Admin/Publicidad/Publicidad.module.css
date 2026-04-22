@@ -372,3 +372,17 @@
   padding: 2px 8px;
   border-radius: 20px;
 }
+
+@media (max-width: 768px) {
+  .card { padding: 16px 14px; }
+
+  .uploadSlot { aspect-ratio: 16/6; }
+
+  .offerRow { grid-template-columns: 1fr; }
+
+  .bannerItem { gap: 10px; }
+  .thumb { width: 72px; height: 24px; }
+
+  .offerItem { flex-wrap: wrap; gap: 10px; }
+  .offerBadgeWrap { flex-direction: row; align-items: center; }
+}

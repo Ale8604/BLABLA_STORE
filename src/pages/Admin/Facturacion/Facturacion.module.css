@@ -383,3 +383,27 @@
   font-size: 0.85rem;
   padding: 10px 0;
 }
+
+@media (max-width: 768px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .list {
+    max-height: 340px;
+  }
+
+  .tableHead,
+  .tableRow {
+    grid-template-columns: 1fr 50px 80px;
+  }
+
+  .tableHead > *:last-child,
+  .tableRow > *:last-child { display: none; }
+
+  .actions { flex-direction: column; }
+
+  .btnConfirm,
+  .btnPdf,
+  .btnCancel { width: 100%; justify-content: center; }
+}

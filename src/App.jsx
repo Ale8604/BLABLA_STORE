@@ -16,9 +16,6 @@ import CrearProducto from './pages/Admin/CrearProducto/CrearProducto';
 import Archivados from './pages/Admin/Archivados/Archivados';
 import Publicidad from './pages/Admin/Publicidad/Publicidad';
 import Facturacion from './pages/Admin/Facturacion/Facturacion';
-import Cajas from './pages/Admin/Cajas/Cajas';
-import SedeDetalle from './pages/Admin/Cajas/SedeDetalle';
-import Comisiones from './pages/Admin/Comisiones/Comisiones';
 import ProtectedRoute from './components/ProtectedRoute';
 import UserRoute from './components/UserRoute';
 import PageTransition from './components/PageTransition';
@@ -46,9 +43,6 @@ function App() {
           <Route path="archivados"  element={<PageTransition><Archivados /></PageTransition>} />
           <Route path="publicidad"   element={<PageTransition><Publicidad /></PageTransition>} />
           <Route path="facturacion"  element={<PageTransition><Facturacion /></PageTransition>} />
-          <Route path="cajas"        element={<PageTransition><Cajas /></PageTransition>} />
-          <Route path="cajas/:sedeId" element={<PageTransition><SedeDetalle /></PageTransition>} />
-          <Route path="comisiones"   element={<PageTransition><Comisiones /></PageTransition>} />
         </Route>
 
         <Route path="*" element={<PageTransition><NotFoundPage /></PageTransition>} />

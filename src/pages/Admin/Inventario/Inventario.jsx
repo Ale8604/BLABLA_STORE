@@ -71,6 +71,7 @@ const Inventario = () => {
         </div>
       </div>
 
+      <div className={styles.tableContainer}>
       <table className={styles.table}>
         <thead>
           <tr>
@@ -115,6 +116,7 @@ const Inventario = () => {
           ))}
         </tbody>
       </table>
+      </div>
       <AnimatePresence>
         {toast && (
           <motion.div

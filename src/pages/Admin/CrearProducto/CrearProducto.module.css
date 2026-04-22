@@ -522,6 +522,33 @@
 }
 .localDraftDiscard:hover { background: rgba(255,80,80,0.18); color: #ff6b6b; }
 
+@media (max-width: 768px) {
+  .card { padding: 18px 14px; }
+
+  .imageRow { grid-template-columns: repeat(2, 1fr); }
+
+  .fieldsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .spanTwo { grid-column: span 1; }
+
+  .textareaRow { flex-direction: column; }
+
+  .actions { flex-wrap: wrap; }
+
+  .confirmBtn,
+  .clearBtn,
+  .draftBtn { flex: 1; text-align: center; }
+
+  .localDraftBanner { flex-direction: column; align-items: flex-start; }
+  .localDraftActions { width: 100%; }
+  .localDraftResume,
+  .localDraftDiscard { flex: 1; text-align: center; }
+
+  .borradoresGrid { grid-template-columns: 1fr; }
+}
+
 /* ── Borradores section ── */
 .borradoresSection {
   display: flex;

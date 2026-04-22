@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { FaPlus, FaTimes, FaMagic, FaImage, FaTrash } from 'react-icons/fa';
 import { useProducts } from '../../../components/context/ProductsContext';
 import { api } from '../../../lib/api';
+import { uploadImage } from '../../../lib/supabase';
 import styles from './CrearProducto.module.css';
 
 const CATEGORIAS  = ['Teléfonos', 'Accesorios', 'Repuestos'];
@@ -51,16 +52,6 @@ const compressImage = (file, maxPx = 1200, quality = 0.8) =>
     img.src = url;
   });
 
-const blobToBase64 = (url) => {
-  if (!url || !url.startsWith('blob:')) return Promise.resolve(url);
-  return fetch(url)
-    .then(r => r.blob())
-    .then(blob => new Promise(resolve => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result);
-      reader.readAsDataURL(blob);
-    }));
-};
 
 const getDraftMissing = (draft) =>
   REQUIRED_FIELDS
@@ -208,7 +199,7 @@ const CrearProducto = () => {
       form.images
         .map((img, i) => img ? { color: form.colors[i], image: img } : null)
         .filter(Boolean)
-        .map(async v => ({ color: v.color, image: await blobToBase64(v.image) }))
+        .map(async v => ({ color: v.color, image: await uploadImage(v.image) }))
     );
 
   const handleImageSlot = async (index, file) => {
