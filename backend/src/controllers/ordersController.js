@@ -100,23 +100,59 @@ const getOne = async (req, res) => {
 const updateStatus = async (req, res) => {
   try {
     const { status, clientName, clientPhone, clientCedula, sedeId, vendedorId } = req.body;
-    const order = await prisma.order.update({
-      where: { id: Number(req.params.id) },
-      data:  {
-        status,
-        ...(clientName   !== undefined && { clientName   }),
-        ...(clientPhone  !== undefined && { clientPhone  }),
-        ...(clientCedula !== undefined && { clientCedula }),
-        ...(sedeId     !== undefined   && { sedeId:     sedeId     ? Number(sedeId)     : null }),
-        ...(vendedorId !== undefined   && { vendedorId: vendedorId ? Number(vendedorId) : null }),
-      },
-      include: {
-        items:    true,
-        user:     { select: { email: true, nombre: true } },
-        sede:     { select: { id: true, nombre: true } },
-        vendedor: { select: { id: true, nombre: true } },
-      },
+    const orderId = Number(req.params.id);
+
+    const current = await prisma.order.findUnique({
+      where:   { id: orderId },
+      include: { items: true },
     });
+    if (!current) return res.status(404).json({ error: 'Pedido no encontrado' });
+
+    const stockOps = [];
+
+    if (status === 'CONFIRMED' && current.status !== 'CONFIRMED') {
+      for (const item of current.items) {
+        stockOps.push(
+          prisma.product.update({
+            where: { id: item.productId },
+            data:  { stock: { decrement: item.quantity } },
+          })
+        );
+      }
+    }
+
+    if (status === 'CANCELLED' && current.status === 'CONFIRMED') {
+      for (const item of current.items) {
+        stockOps.push(
+          prisma.product.update({
+            where: { id: item.productId },
+            data:  { stock: { increment: item.quantity } },
+          })
+        );
+      }
+    }
+
+    const [order] = await prisma.$transaction([
+      prisma.order.update({
+        where: { id: orderId },
+        data:  {
+          status,
+          ...(clientName   !== undefined && { clientName   }),
+          ...(clientPhone  !== undefined && { clientPhone  }),
+          ...(clientCedula !== undefined && { clientCedula }),
+          ...(sedeId     !== undefined   && { sedeId:     sedeId     ? Number(sedeId)     : null }),
+          ...(vendedorId !== undefined   && { vendedorId: vendedorId ? Number(vendedorId) : null }),
+        },
+        include: {
+          items:    true,
+          user:     { select: { email: true, nombre: true } },
+          sede:     { select: { id: true, nombre: true } },
+          vendedor: { select: { id: true, nombre: true } },
+        },
+      }),
+      ...stockOps,
+    ]);
+
     res.json(order);
   } catch (err) {
     console.error('updateStatus:', err);
