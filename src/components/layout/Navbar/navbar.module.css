@@ -3,10 +3,10 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.6rem 2rem;
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.6);
   border-radius: 100px;
   margin: 20px auto;
   width: 90%;
@@ -14,6 +14,7 @@
   position: sticky;
   top: 20px;
   z-index: 1000;
+  box-shadow: 0 0 40px rgba(91, 124, 250, 0.25), 0 8px 32px rgba(0, 0, 0, 0.12);
 }
 
 .logoWrapper { display: flex; align-items: center; }
@@ -34,7 +35,7 @@
 }
 
 .menuLinks a {
-  color: #999;
+  color: #1a1a2e;
   text-decoration: none;
   font-size: .9rem;
   font-weight: 700;
@@ -43,8 +44,8 @@
 }
 
 .menuLinks a:hover {
-  color: #fff;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  color: #5b7cfa;
+  text-shadow: 0 0 12px rgba(91, 124, 250, 0.6);
 }
 
 .navIcons {
@@ -56,7 +57,7 @@
 .iconBtn {
   background: none;
   border: none;
-  color: #fff;
+  color: #1a1a2e;
   cursor: pointer;
   opacity: 0.7;
   transition: opacity 0.3s, transform 0.2s, color 0.2s;
@@ -102,7 +103,7 @@
 .catTrigger {
   background: none;
   border: none;
-  color: #999;
+  color: #1a1a2e;
   font-size: .9rem;
   font-weight: 700;
   letter-spacing: 1.2px;
@@ -112,7 +113,7 @@
   transition: color 0.3s ease;
 }
 
-.catTrigger:hover { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+.catTrigger:hover { color: #5b7cfa; text-shadow: 0 0 12px rgba(91, 124, 250, 0.6); }
 
 .catDropdown {
   position: absolute;
@@ -225,32 +226,32 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(91, 124, 250, 0.07);
+  border: 1px solid rgba(91, 124, 250, 0.2);
   border-radius: 100px;
   padding: 7px 16px;
   margin: 0 20px;
   transform-origin: center;
 }
 
-.searchIcon { color: rgba(255,255,255,0.35); flex-shrink: 0; }
+.searchIcon { color: rgba(91, 124, 250, 0.6); flex-shrink: 0; }
 
 .searchInput {
   flex: 1;
   background: none;
   border: none;
   outline: none;
-  color: #fff;
+  color: #1a1a2e;
   font-size: 0.88rem;
   min-width: 0;
 }
 
-.searchInput::placeholder { color: rgba(255,255,255,0.25); }
+.searchInput::placeholder { color: rgba(26, 26, 46, 0.35); }
 
 .searchClose {
   background: none;
   border: none;
-  color: rgba(255,255,255,0.3);
+  color: rgba(26, 26, 46, 0.3);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -259,14 +260,14 @@
   flex-shrink: 0;
 }
 
-.searchClose:hover { color: rgba(255,255,255,0.7); }
+.searchClose:hover { color: rgba(26, 26, 46, 0.7); }
 
 /* ── Hamburger (hidden on desktop) ── */
 .hamburger {
   display: none;
   background: none;
   border: none;
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(26, 26, 46, 0.75);
   cursor: pointer;
   padding: 4px;
   align-items: center;
