@@ -34,6 +34,7 @@ const emptyForm = {
   ramInput: '', storageInput: '',
   images: Array(SLOTS).fill(null),
   colors: Array(SLOTS).fill('#000000'),
+  stocks: Array(SLOTS).fill(0),
 };
 
 const compressImage = (file, maxPx = 1200, quality = 0.8) =>
@@ -158,6 +159,9 @@ const CrearProducto = () => {
         colors: (found.colorVariants?.length
           ? found.colorVariants.map(v => v.color)
           : ['#000000']).concat(Array(SLOTS).fill('#000000')).slice(0, SLOTS),
+        stocks: (found.colorVariants?.length
+          ? found.colorVariants.map(v => v.stock ?? 0)
+          : [found.stock ?? 0]).concat(Array(SLOTS).fill(0)).slice(0, SLOTS),
       });
     }).catch(() => {});
   }, [editId]);
@@ -206,10 +210,16 @@ const CrearProducto = () => {
   const buildColorVariants = async () =>
     await Promise.all(
       form.images
-        .map((img, i) => img ? { color: form.colors[i], image: img } : null)
+        .map((img, i) => img ? { color: form.colors[i], image: img, stock: Number(form.stocks[i]) || 0 } : null)
         .filter(Boolean)
-        .map(async v => ({ color: v.color, image: await uploadImage(v.image) }))
+        .map(async v => ({ color: v.color, image: await uploadImage(v.image), stock: v.stock }))
     );
+
+  const handleStockChange = (index, value) => {
+    const updated = [...form.stocks];
+    updated[index] = value;
+    setForm(prev => ({ ...prev, stocks: updated }));
+  };
 
   const handleImageSlot = async (index, file) => {
     const updated = [...form.images];
@@ -233,10 +243,13 @@ const CrearProducto = () => {
     try {
       const colorVariants = await buildColorVariants();
       const image         = colorVariants[0]?.image || '';
+      const totalStock    = colorVariants.length > 0
+        ? colorVariants.reduce((s, v) => s + v.stock, 0)
+        : Number(form.stock);
       const payload = {
         name:      form.name,
         price:     Number(form.price),
-        stock:     Number(form.stock),
+        stock:     totalStock,
         code:      form.code,
         description: form.description,
         specs:     form.specs,
@@ -282,10 +295,13 @@ const CrearProducto = () => {
     try {
       const colorVariants = await buildColorVariants();
       const image         = colorVariants[0]?.image || '';
+      const totalStock    = colorVariants.length > 0
+        ? colorVariants.reduce((s, v) => s + v.stock, 0)
+        : Number(form.stock);
       const payload = {
         name:        form.name        || 'Sin nombre',
         price:       Number(form.price)   || 0,
-        stock:       Number(form.stock)   || 0,
+        stock:       totalStock,
         description: form.description || '',
         specs:       form.specs       || '',
         category:    form.category,
@@ -518,7 +534,15 @@ const CrearProducto = () => {
                       className={styles.colorInputHidden}
                     />
                   </label>
-                  <span className={styles.colorLabel}>Color variante</span>
+                  <input
+                    type="number"
+                    min="0"
+                    className={styles.variantStockInput}
+                    placeholder="Stock"
+                    value={form.stocks[i]}
+                    onChange={e => handleStockChange(i, e.target.value)}
+                    onClick={e => e.stopPropagation()}
+                  />
                 </div>
               )}
             </div>
@@ -558,10 +582,24 @@ const CrearProducto = () => {
         </div>
 
         <div className={styles.fieldsGrid}>
-          <div className={styles.fieldGroup}>
-            <label className={styles.label}>Stock Disponible</label>
-            <input className={styles.input} type="number" placeholder="Ingresa la Cantidad" value={form.stock} onChange={e => set('stock', e.target.value)} />
-          </div>
+          {!form.images.some(Boolean) && (
+            <div className={styles.fieldGroup}>
+              <label className={styles.label}>Stock Disponible</label>
+              <input className={styles.input} type="number" placeholder="Ingresa la Cantidad" value={form.stock} onChange={e => set('stock', e.target.value)} />
+            </div>
+          )}
+          {form.images.some(Boolean) && (
+            <div className={styles.fieldGroup}>
+              <label className={styles.label}>Stock Total</label>
+              <input
+                className={styles.input}
+                type="number"
+                value={form.stocks.reduce((s, v, i) => s + (form.images[i] ? Number(v) || 0 : 0), 0)}
+                readOnly
+                style={{ opacity: 0.5, cursor: 'not-allowed' }}
+              />
+            </div>
+          )}
           <div className={styles.fieldGroup}>
             <label className={styles.label}>Entrada (%)</label>
             <input className={styles.input} type="number" min="0" max="100" placeholder="30" value={form.entrada} onChange={e => set('entrada', e.target.value)} />

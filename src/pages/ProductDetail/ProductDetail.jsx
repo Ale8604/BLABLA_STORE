@@ -64,17 +64,18 @@ const ProductDetail = () => {
   );
 
   const handleAddToCart = () => {
-    const specs = [
-      selectedRam,
-      selectedStore,
-    ].filter(Boolean).join(' / ');
+    if (outOfStock) return;
+    const specs = [selectedRam, selectedStore].filter(Boolean).join(' / ');
+    const colorName = currentVariant?.color ?? '';
 
     addToCart({
-      id:    `${product.id}-${selectedRam}-${selectedStore}-${activeColor}`,
-      name:  product.name,
+      id:           `${product.id}-${selectedRam}-${selectedStore}-${activeColor}`,
+      productId:    product.id,
+      name:         product.name,
       specs,
-      price: displayPrice,
-      image: activeImg,
+      colorVariant: colorName,
+      price:        displayPrice,
+      image:        activeImg,
     });
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
@@ -96,6 +97,11 @@ const ProductDetail = () => {
     setActiveColor(i);
     if (variants?.[i]) setActiveImg(variants[i].image);
   };
+
+  const currentVariant   = variants?.[activeColor];
+  const colorStock       = currentVariant?.stock ?? product.stock ?? 0;
+  const outOfStock       = colorStock === 0;
+  const lowStock         = !outOfStock && colorStock <= 3;
 
   return (
     <div className={styles.page}>
@@ -265,14 +271,22 @@ const ProductDetail = () => {
               </div>
             )}
 
+            {outOfStock && (
+              <p className={styles.outOfStockMsg}>Sin stock para este color</p>
+            )}
+            {lowStock && (
+              <p className={styles.lowStockMsg}>¡Solo quedan {colorStock}!</p>
+            )}
+
             <motion.button
-              className={`${styles.cartBtn} ${added ? styles.cartBtnAdded : ''}`}
+              className={`${styles.cartBtn} ${added ? styles.cartBtnAdded : ''} ${outOfStock ? styles.cartBtnDisabled : ''}`}
               onClick={handleAddToCart}
-              whileTap={{ scale: 0.95 }}
+              disabled={outOfStock}
+              whileTap={outOfStock ? {} : { scale: 0.95 }}
               transition={{ type: 'spring', stiffness: 400, damping: 18 }}
             >
               <FaShoppingCart size={16} />
-              {added ? '¡Agregado!' : 'Agregar al Carrito'}
+              {outOfStock ? 'Sin stock' : added ? '¡Agregado!' : 'Agregar al Carrito'}
             </motion.button>
           </div>
         </div>

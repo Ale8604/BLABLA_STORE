@@ -20,6 +20,7 @@ export const CartProvider = ({ children }) => {
           item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
         );
       }
+      // Preserve colorVariant and productId for order submission
       return [...prevCart, { ...product, quantity: 1 }];
     });
   };

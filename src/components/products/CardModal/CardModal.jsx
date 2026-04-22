@@ -35,11 +35,12 @@ const CardModal = () => {
         clientName:  user?.nombre ?? '',
         clientPhone: user?.telefono ?? '',
         items: cart.map(item => ({
-          productId: Number(String(item.id).split('-')[0]),
-          name:      item.name,
-          specs:     item.specs || '',
-          quantity:  item.quantity,
-          price:     item.price,
+          productId:    Number(String(item.id).split('-')[0]),
+          name:         item.name,
+          specs:        item.specs        || '',
+          colorVariant: item.colorVariant || '',
+          quantity:     item.quantity,
+          price:        item.price,
         })),
       });
       setInvoiceCode(order.invoiceCode || '');

@@ -79,12 +79,16 @@ const Inventario = () => {
             <th>Nombre</th>
             <th>Estado</th>
             <th>Precio</th>
+            <th>Stock</th>
             <th>Archivado</th>
             <th>Editar</th>
           </tr>
         </thead>
         <tbody>
-          {filtered.map(product => (
+          {filtered.map(product => {
+            const variants = Array.isArray(product.colorVariants) && product.colorVariants.length > 0
+              ? product.colorVariants : null;
+            return (
             <tr key={product.id} className={product.archived ? styles.rowArchived : ''}>
               <td>
                 <img src={product.image} alt={product.name} className={styles.productImg} />
@@ -94,6 +98,26 @@ const Inventario = () => {
                 <span className={`${styles.statusDot} ${product.active ? styles.statusActive : styles.statusInactive}`} />
               </td>
               <td className={styles.price}>${product.price.toLocaleString()}</td>
+              <td>
+                {variants ? (
+                  <div className={styles.stockVariants}>
+                    {variants.map((v, i) => (
+                      <span
+                        key={i}
+                        className={`${styles.stockChip} ${v.stock === 0 ? styles.stockChipOut : v.stock <= 3 ? styles.stockChipLow : ''}`}
+                        title={v.color}
+                      >
+                        <span className={styles.stockSwatch} style={{ backgroundColor: v.color }} />
+                        {v.stock ?? 0}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <span className={`${styles.stockChip} ${product.stock === 0 ? styles.stockChipOut : product.stock <= 3 ? styles.stockChipLow : ''}`}>
+                    {product.stock}
+                  </span>
+                )}
+              </td>
               <td>
                 <button
                   className={`${styles.archiveBtn} ${product.archived ? styles.archiveBtnActive : ''}`}
@@ -113,7 +137,8 @@ const Inventario = () => {
                 </button>
               </td>
             </tr>
-          ))}
+            );
+          })}
         </tbody>
       </table>
       </div>
