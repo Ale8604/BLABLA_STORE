@@ -89,7 +89,7 @@ const CrearProducto = () => {
 
   useEffect(() => {
     workerRef.current = new Worker(
-      new URL('../../workers/removeBg.worker.js', import.meta.url),
+      new URL('../../../workers/removeBg.worker.js', import.meta.url),
       { type: 'module' }
     );
     return () => workerRef.current?.terminate();
