@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import { motion } from 'framer-motion';
+import { Helmet } from 'react-helmet-async';
 import { FaWhatsapp, FaInstagram, FaShieldAlt, FaTruck, FaHeadset } from 'react-icons/fa';
 import Navbar from '../../components/layout/Navbar/navbar';
 import Footer from '../../components/layout/Footer/Footer';
@@ -56,6 +57,10 @@ const ValorCard = ({ v, delay }) => {
 
 const NosotrosPage = () => (
   <div className={styles.page}>
+    <Helmet>
+      <title>Nosotros — BlaBla Store</title>
+      <meta name="description" content="Conocé BlaBla Store, tu tienda de confianza para teléfonos y accesorios en Valencia, Venezuela. Garantía real, envíos rápidos y atención personalizada." />
+    </Helmet>
     <Navbar />
     <CardModal />
     <main className={styles.main}>

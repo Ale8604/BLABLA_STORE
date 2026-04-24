@@ -1,18 +1,14 @@
 .overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1000;
-  display: flex;
-  justify-content: flex-end; /* Lo alinea a la derecha */
-  padding-top: 100px;
-  padding-right: 50px;
+  top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 2000;
+  display: flex; justify-content: flex-end;
+  padding: 80px 50px 0 0;
 }
 
 .modal {
   width: 380px;
+  height: fit-content;
   background: rgba(10, 13, 22, 0.92);
   backdrop-filter: blur(40px);
   -webkit-backdrop-filter: blur(40px);
@@ -21,7 +17,6 @@
   padding: 25px;
   color: white;
   box-shadow: 0 16px 60px rgba(0, 0, 0, 0.8);
-  position: relative;
   display: flex;
   flex-direction: column;
 }
@@ -59,11 +54,16 @@
   color: #ff6b6b;
 }
 
+.itemList {
+  overflow-y: auto;
+  max-height: 340px;
+}
+
 .cartItem {
   display: flex;
   align-items: center;
   gap: 15px;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .itemImg {
@@ -71,6 +71,7 @@
   height: 55px;
   border-radius: 8px;
   object-fit: cover;
+  flex-shrink: 0;
 }
 
 .itemInfo h4 {
@@ -136,52 +137,10 @@
   font-weight: bold;
   cursor: pointer;
   box-shadow: 0 4px 15px rgba(45, 91, 255, 0.3);
+  transition: opacity 0.2s;
 }
 
-.overlay {
-  position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
-  z-index: 2000;
-  display: flex; justify-content: flex-end;
-  padding: 80px 50px 0 0;
-}
-
-.modal {
-  width: 380px; height: fit-content;
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  padding: 25px;
-  color: white;
-}
-
-.title { font-size: 1.2rem; margin-bottom: 20px; letter-spacing: 1px; }
-
-.cartItem { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
-
-.itemImg { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; }
-
-.greenText { color: #4CAF50; font-weight: bold; }
-
-.quantityControls { margin-left: auto; display: flex; align-items: center; gap: 10px; }
-
-.qtyBtn {
-  background: #2D5BFF; border: none; color: white;
-  width: 20px; height: 20px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center; cursor: pointer;
-}
-
-.footer { margin-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 20px; }
-
-.totalContainer { display: flex; justify-content: space-between; margin-bottom: 15px; }
-
-.orderBtn {
-  width: 100%; padding: 12px; background: #2D5BFF;
-  color: white; border: none; border-radius: 25px;
-  font-weight: bold; cursor: pointer;
-}
+.orderBtn:hover { opacity: 0.88; }
 
 .deleteBtn {
   display: flex;
@@ -205,7 +164,7 @@
   color: #ff6b6b;
 }
 
-/* ── Auth popup overlay (inside modal) ── */
+/* ── Auth popup ── */
 .authOverlay {
   position: absolute;
   inset: 0;
@@ -311,10 +270,7 @@
 
 @media (max-width: 768px) {
   .sheetHandle { display: block; }
-}
 
-/* ── Mobile: cart becomes a bottom sheet ── */
-@media (max-width: 768px) {
   .overlay {
     padding: 0;
     justify-content: center;
@@ -336,6 +292,7 @@
   }
 }
 
+/* ── Empty cart ── */
 .emptyCart {
   display: flex;
   flex-direction: column;
@@ -346,7 +303,7 @@
 }
 
 .emptyIcon {
-  color: rgba(255, 255, 255, 0.2); /* Icono sutil y transparente */
+  color: rgba(255, 255, 255, 0.2);
   margin-bottom: 20px;
 }
 
@@ -362,6 +319,7 @@
   color: #aaa;
 }
 
+/* ── Success state ── */
 .successState {
   display: flex;
   flex-direction: column;
@@ -372,7 +330,7 @@
 }
 
 .successIcon {
-  color: #4CAF50; /* Verde éxito */
+  color: #4CAF50;
   margin-bottom: 20px;
   filter: drop-shadow(0 0 10px rgba(76, 175, 80, 0.4));
 }
@@ -386,7 +344,7 @@
 .successState p {
   font-size: 0.9rem;
   color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 10px;
+  margin-bottom: 25px;
   line-height: 1.4;
 }
 
@@ -407,32 +365,4 @@
   color: #fff;
   font-weight: 800;
   letter-spacing: 0.5px;
-}
-
-.successState {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 10px;
-  text-align: center;
-}
-
-.successIcon {
-  color: #4CAF50; /* Verde éxito */
-  margin-bottom: 20px;
-  filter: drop-shadow(0 0 10px rgba(76, 175, 80, 0.4));
-}
-
-.successState h3 {
-  font-size: 1.4rem;
-  margin-bottom: 10px;
-  color: white;
-}
-
-.successState p {
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 25px;
-  line-height: 1.4;
 }

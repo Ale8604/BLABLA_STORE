@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaArrowLeft, FaShoppingCart } from 'react-icons/fa';
 import Navbar from '../../components/layout/Navbar/navbar';
@@ -103,8 +104,34 @@ const ProductDetail = () => {
   const outOfStock       = colorStock === 0;
   const lowStock         = !outOfStock && colorStock <= 3;
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    image: product.image,
+    description: product.description || product.name,
+    brand: { '@type': 'Brand', name: product.brand },
+    offers: {
+      '@type': 'Offer',
+      priceCurrency: 'USD',
+      price: displayPrice,
+      availability: (product.stock ?? 0) > 0
+        ? 'https://schema.org/InStock'
+        : 'https://schema.org/OutOfStock',
+    },
+  };
+
   return (
     <div className={styles.page}>
+      <Helmet>
+        <title>{product.name} — BlaBla Store</title>
+        <meta name="description" content={product.description || `Comprá ${product.name} en BlaBla Store. Precio: $${displayPrice}. Financiamiento disponible.`} />
+        <meta property="og:title" content={`${product.name} — BlaBla Store`} />
+        <meta property="og:description" content={product.description || `${product.name} desde $${displayPrice}`} />
+        <meta property="og:image" content={product.image} />
+        <meta property="og:type" content="product" />
+        <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
+      </Helmet>
       <Navbar />
       <CardModal />
       <main className={styles.main}>
@@ -208,15 +235,19 @@ const ProductDetail = () => {
                   Color: <strong>{variants[activeColor]?.color ?? ''}</strong>
                 </p>
                 <div className={styles.colorRow}>
-                  {variants.map((v, i) => (
-                    <button
-                      key={i}
-                      className={`${styles.colorDot} ${activeColor === i ? styles.colorDotActive : ''}`}
-                      style={{ backgroundColor: v.color }}
-                      onClick={() => selectColor(i)}
-                      title={v.color}
-                    />
-                  ))}
+                  {variants.map((v, i) => {
+                    const oos = (v.stock ?? 0) === 0;
+                    return (
+                      <button
+                        key={i}
+                        className={`${styles.colorDot} ${activeColor === i ? styles.colorDotActive : ''} ${oos ? styles.colorDotOos : ''}`}
+                        style={{ backgroundColor: v.color }}
+                        onClick={() => selectColor(i)}
+                        title={oos ? `${v.color} — Sin stock` : v.color}
+                        aria-label={oos ? `${v.color} sin stock` : v.color}
+                      />
+                    );
+                  })}
                 </div>
               </div>
             )}

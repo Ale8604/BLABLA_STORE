@@ -12,7 +12,7 @@ const Footer = () => (
         <a
           href="https://instagram.com"
           target="_blank"
-          rel="noopener noreferrer"
+          rel="noopener noreferrer nofollow"
           className={styles.iconBtn}
           aria-label="Instagram"
         >
@@ -28,7 +28,7 @@ const Footer = () => (
         <a
           href={`https://wa.me/${WHATSAPP}`}
           target="_blank"
-          rel="noopener noreferrer"
+          rel="noopener noreferrer nofollow"
           className={styles.iconBtn}
           aria-label="WhatsApp"
         >

@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
 import { FaMobileAlt, FaHeadphones, FaTimes } from 'react-icons/fa';
 import Navbar from '../../components/layout/Navbar/navbar.jsx';
@@ -67,8 +68,18 @@ function StorePage() {
 
   const catMeta = CATEGORY_META[categoria];
 
+  const pageTitle = categoria
+    ? `${categoria} — BlaBla Store`
+    : q
+    ? `Resultados para "${q}" — BlaBla Store`
+    : 'BlaBla Store — Teléfonos y Accesorios en Venezuela';
+
   return (
     <div className={styles.appWrapper}>
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="description" content="Comprá teléfonos, accesorios y repuestos en Valencia, Venezuela. iPhone, Samsung, Xiaomi y más marcas. Financiamiento en cuotas disponible." />
+      </Helmet>
       <Navbar />
       <CardModal />
       <main className={styles.content}>
@@ -139,6 +150,8 @@ function StorePage() {
             ) : (
               <div className={styles.emptyState}>
                 <p>No hay productos que coincidan.</p>
+                <span>Probá ajustando los filtros o buscando otro término.</span>
+                <button className={styles.emptyStateBtn} onClick={() => navigate('/')}>Ver todos los productos</button>
               </div>
             )}
           </section>

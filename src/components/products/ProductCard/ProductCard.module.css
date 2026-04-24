@@ -1,97 +1,4 @@
 .card {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
-  backdrop-filter: blur(10px);
-  border-radius: 15px;
-  padding: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.3s ease, border-color 0.3s ease;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-  border-color: rgba(0, 71, 255, 0.4);
-}
-
-.colorDots {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-bottom: 15px;
-}
-
-.dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.imageContainer {
-  height: 180px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 15px;
-}
-
-.productImage {
-  max-height: 100%;
-  object-fit: contain;
-  /* Filtro sutil para que resalte en el fondo oscuro */
-  drop-shadow: 0 10px 20px rgba(0,0,0,0.5);
-}
-
-.info {
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding-top: 15px;
-}
-
-.productName {
-  font-size: 1rem;
-  font-weight: 700;
-  margin-bottom: 5px;
-  color: #fff;
-}
-
-.price {
-  font-size: 0.9rem;
-  font-weight: 800;
-  color: #fff;
-  margin-bottom: 5px;
-}
-
-.installments {
-  font-size: 0.65rem;
-  color: #888;
-  margin-bottom: 15px;
-  line-height: 1.2;
-}
-
-.detailRow {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding-top: 4px;
-  cursor: pointer;
-}
-
-.detailText {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: #5b7cfa;
-  letter-spacing: 0.3px;
-}
-
-.detailArrow {
-  color: #5b7cfa;
-  flex-shrink: 0;
-}
-
-/* src/components/products/ProductCard/ProductCard.module.css */
-
-.card {
   max-width: 320px;
   position: relative;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
@@ -132,7 +39,7 @@
   display: flex;
   justify-content: center;
   gap: 8px;
-  margin-bottom: 15px; /* Espacio antes de la imagen */
+  margin-bottom: 15px;
   padding-top: 10px;
 }
 
@@ -154,11 +61,6 @@
   transform: scale(1.25);
   border: 2px solid white;
   box-shadow: 0 0 0 2px rgba(255,255,255,0.25);
-}
-
-/* Opcional: Para que el blanco se vea sobre fondo oscuro */
-.colorCircle[style*="background-color: #FFFFFF"] {
-  box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
 }
 
 /* ── Discount badge ── */
@@ -190,4 +92,50 @@
   color: rgba(255,255,255,0.3);
   text-decoration: line-through;
   font-weight: 500;
+}
+
+/* ── Info ── */
+.info {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 15px;
+}
+
+.productName {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+  color: #fff;
+}
+
+.price {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.installments {
+  font-size: 0.65rem;
+  color: #888;
+  margin-bottom: 15px;
+  line-height: 1.2;
+}
+
+.detailRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-top: 4px;
+  cursor: pointer;
+}
+
+.detailText {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #5b7cfa;
+  letter-spacing: 0.3px;
+}
+
+.detailArrow {
+  color: #5b7cfa;
+  flex-shrink: 0;
 }

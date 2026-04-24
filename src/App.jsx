@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import StorePage from './pages/Store/StorePage';
@@ -9,19 +10,20 @@ import NosotrosPage from './pages/Nosotros/NosotrosPage';
 import OfertasPage from './pages/Ofertas/OfertasPage';
 import PerfilPage from './pages/Perfil/PerfilPage';
 import NotFoundPage from './pages/NotFound/NotFoundPage';
-import AdminLayout from './pages/Admin/AdminLayout';
-import Dashboard from './pages/Admin/Dashboard/Dashboard';
-import Inventario from './pages/Admin/Inventario/Inventario';
-import CrearProducto from './pages/Admin/CrearProducto/CrearProducto';
-import Archivados from './pages/Admin/Archivados/Archivados';
-import Publicidad from './pages/Admin/Publicidad/Publicidad';
-import Facturacion from './pages/Admin/Facturacion/Facturacion';
-import ImportarProductos from './pages/Admin/ImportarProductos/ImportarProductos';
-import EditarProducto from './pages/Admin/EditarProducto/EditarProducto';
-import QuitarFondos from './pages/Admin/QuitarFondos/QuitarFondos';
 import ProtectedRoute from './components/ProtectedRoute';
 import UserRoute from './components/UserRoute';
 import PageTransition from './components/PageTransition';
+
+const AdminLayout       = lazy(() => import('./pages/Admin/AdminLayout'));
+const Dashboard         = lazy(() => import('./pages/Admin/Dashboard/Dashboard'));
+const Inventario        = lazy(() => import('./pages/Admin/Inventario/Inventario'));
+const CrearProducto     = lazy(() => import('./pages/Admin/CrearProducto/CrearProducto'));
+const Archivados        = lazy(() => import('./pages/Admin/Archivados/Archivados'));
+const Publicidad        = lazy(() => import('./pages/Admin/Publicidad/Publicidad'));
+const Facturacion       = lazy(() => import('./pages/Admin/Facturacion/Facturacion'));
+const ImportarProductos = lazy(() => import('./pages/Admin/ImportarProductos/ImportarProductos'));
+const EditarProducto    = lazy(() => import('./pages/Admin/EditarProducto/EditarProducto'));
+const QuitarFondos      = lazy(() => import('./pages/Admin/QuitarFondos/QuitarFondos'));
 
 function App() {
   const location = useLocation();
@@ -38,17 +40,17 @@ function App() {
         <Route path="/ofertas"           element={<PageTransition><OfertasPage /></PageTransition>} />
         <Route path="/perfil"            element={<UserRoute><PageTransition><PerfilPage /></PageTransition></UserRoute>} />
 
-        <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
+        <Route path="/admin" element={<ProtectedRoute><Suspense fallback={null}><AdminLayout /></Suspense></ProtectedRoute>}>
           <Route index element={<Navigate to="/admin/dashboard" replace />} />
-          <Route path="dashboard"  element={<PageTransition><Dashboard /></PageTransition>} />
-          <Route path="inventario" element={<PageTransition><Inventario /></PageTransition>} />
-          <Route path="crear"      element={<PageTransition><CrearProducto /></PageTransition>} />
-          <Route path="archivados"  element={<PageTransition><Archivados /></PageTransition>} />
-          <Route path="publicidad"   element={<PageTransition><Publicidad /></PageTransition>} />
-          <Route path="facturacion"  element={<PageTransition><Facturacion /></PageTransition>} />
-          <Route path="importar"     element={<PageTransition><ImportarProductos /></PageTransition>} />
-          <Route path="editar"       element={<PageTransition><EditarProducto /></PageTransition>} />
-          <Route path="quitar-fondos" element={<PageTransition><QuitarFondos /></PageTransition>} />
+          <Route path="dashboard"    element={<Suspense fallback={null}><PageTransition><Dashboard /></PageTransition></Suspense>} />
+          <Route path="inventario"   element={<Suspense fallback={null}><PageTransition><Inventario /></PageTransition></Suspense>} />
+          <Route path="crear"        element={<Suspense fallback={null}><PageTransition><CrearProducto /></PageTransition></Suspense>} />
+          <Route path="archivados"   element={<Suspense fallback={null}><PageTransition><Archivados /></PageTransition></Suspense>} />
+          <Route path="publicidad"   element={<Suspense fallback={null}><PageTransition><Publicidad /></PageTransition></Suspense>} />
+          <Route path="facturacion"  element={<Suspense fallback={null}><PageTransition><Facturacion /></PageTransition></Suspense>} />
+          <Route path="importar"     element={<Suspense fallback={null}><PageTransition><ImportarProductos /></PageTransition></Suspense>} />
+          <Route path="editar"       element={<Suspense fallback={null}><PageTransition><EditarProducto /></PageTransition></Suspense>} />
+          <Route path="quitar-fondos" element={<Suspense fallback={null}><PageTransition><QuitarFondos /></PageTransition></Suspense>} />
         </Route>
 
         <Route path="*" element={<PageTransition><NotFoundPage /></PageTransition>} />

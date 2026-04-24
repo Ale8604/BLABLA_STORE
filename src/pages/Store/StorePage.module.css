@@ -106,12 +106,35 @@ flex: 1;
 .emptyState {
   grid-column: 1 / -1;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 200px;
+  min-height: 280px;
+  gap: 10px;
+  text-align: center;
   color: rgba(255, 255, 255, 0.4);
   font-size: 1rem;
 }
+
+.emptyState span {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.25);
+}
+
+.emptyStateBtn {
+  margin-top: 8px;
+  padding: 10px 22px;
+  background: rgba(91,124,250,0.12);
+  border: 1px solid rgba(91,124,250,0.3);
+  border-radius: 10px;
+  color: #5b7cfa;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.emptyStateBtn:hover { background: rgba(91,124,250,0.22); }
 
 /* ── Category banner ── */
 .categoryBanner {

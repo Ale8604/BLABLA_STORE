@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { FaTag } from 'react-icons/fa';
+import { Helmet } from 'react-helmet-async';
 import Navbar from '../../components/layout/Navbar/navbar';
 import Footer from '../../components/layout/Footer/Footer';
 import CardModal from '../../components/products/CardModal/CardModal';
@@ -21,6 +22,10 @@ const OfertasPage = () => {
 
   return (
     <div className={styles.page}>
+      <Helmet>
+        <title>Ofertas — BlaBla Store</title>
+        <meta name="description" content="Aprovechá las mejores ofertas en teléfonos y accesorios de BlaBla Store. Productos seleccionados con financiamiento en cuotas." />
+      </Helmet>
       <Navbar />
       <CardModal />
       <main className={styles.main}>
@@ -63,6 +68,9 @@ const OfertasPage = () => {
                 meses={p.meses}
                 image={p.image}
                 colorVariants={p.colorVariants}
+                discountPercent={p.discountPercent}
+                offerStart={p.offerStart}
+                offerEnd={p.offerEnd}
               />
             ))}
           </motion.div>
