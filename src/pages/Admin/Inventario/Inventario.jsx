@@ -130,7 +130,7 @@ const Inventario = () => {
               <td>
                 <button
                   className={styles.editBtn}
-                  onClick={() => navigate(`/admin/crear?edit=${product.id}`)}
+                  onClick={() => navigate(`/admin/editar?id=${product.id}`)}
                   title="Editar"
                 >
                   <FaEdit size={15} />

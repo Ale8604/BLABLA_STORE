@@ -1,0 +1,323 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.pageTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #5b7cfa;
+  margin: 0;
+}
+
+/* ── Header card ── */
+.headerCard {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.headerInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.headerDesc {
+  font-size: 0.87rem;
+  color: rgba(255,255,255,0.5);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.headerDesc strong { color: rgba(255,255,255,0.8); }
+
+/* ── Progress ── */
+.progressRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.progressBar {
+  flex: 1;
+  height: 6px;
+  background: rgba(255,255,255,0.07);
+  border-radius: 10px;
+  overflow: hidden;
+  max-width: 300px;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #5b7cfa, #7c5bfa);
+  border-radius: 10px;
+  min-width: 4px;
+}
+
+.progressLabel {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.4);
+  white-space: nowrap;
+}
+
+/* ── Header actions ── */
+.headerActions { flex-shrink: 0; }
+
+.processAllBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #5b7cfa, #7c5bfa);
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 12px 22px;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(91,124,250,0.35);
+  transition: opacity 0.2s, transform 0.15s;
+  white-space: nowrap;
+}
+
+.processAllBtn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+.stopBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(248,113,113,0.15);
+  border: 1px solid rgba(248,113,113,0.3);
+  border-radius: 12px;
+  color: #f87171;
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 12px 22px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.stopBtn:hover { background: rgba(248,113,113,0.25); }
+
+.allDoneMsg {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #22c55e;
+  margin: 0;
+}
+
+/* ── Empty state ── */
+.emptyCard {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  padding: 60px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.emptyIcon { color: #22c55e; opacity: 0.5; }
+
+.emptyText {
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.5);
+  margin: 0;
+}
+
+.emptyHint {
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.2);
+  margin: 0;
+}
+
+/* ── Product list ── */
+.productList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.productRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 14px;
+  padding: 14px 18px;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.productRowDone {
+  background: rgba(34,197,94,0.05);
+  border-color: rgba(34,197,94,0.2);
+}
+
+.productRowError {
+  background: rgba(248,113,113,0.05);
+  border-color: rgba(248,113,113,0.2);
+}
+
+/* ── Image group ── */
+.imageGroup {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.imageWrap {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.05);
+  flex-shrink: 0;
+}
+
+.thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.imgOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(8,10,18,0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Product info ── */
+.productInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.productName {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.85);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.productPrice {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.35);
+}
+
+.variantCount {
+  font-size: 0.72rem;
+  color: rgba(91,124,250,0.7);
+  font-weight: 600;
+}
+
+/* ── Product action / status ── */
+.productAction {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.singleBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(91,124,250,0.12);
+  border: 1px solid rgba(91,124,250,0.25);
+  border-radius: 10px;
+  color: #5b7cfa;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.singleBtn:hover { background: rgba(91,124,250,0.22); }
+.singleBtn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+.statusDone {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #22c55e;
+}
+
+.statusError {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #f87171;
+  cursor: help;
+}
+
+.statusProc {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.4);
+}
+
+/* ── Spinners ── */
+.spinner {
+  width: 22px;
+  height: 22px;
+  border: 2.5px solid rgba(255,255,255,0.15);
+  border-top-color: #5b7cfa;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+.spinnerSmall {
+  width: 13px;
+  height: 13px;
+  border: 2px solid rgba(255,255,255,0.1);
+  border-top-color: #5b7cfa;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+  .headerCard { flex-direction: column; align-items: stretch; }
+  .processAllBtn, .stopBtn { width: 100%; justify-content: center; }
+  .productRow { flex-wrap: wrap; gap: 12px; }
+  .productAction { width: 100%; }
+  .singleBtn { width: 100%; justify-content: center; }
+  .imageGroup { flex-wrap: wrap; }
+}

@@ -16,6 +16,9 @@ import CrearProducto from './pages/Admin/CrearProducto/CrearProducto';
 import Archivados from './pages/Admin/Archivados/Archivados';
 import Publicidad from './pages/Admin/Publicidad/Publicidad';
 import Facturacion from './pages/Admin/Facturacion/Facturacion';
+import ImportarProductos from './pages/Admin/ImportarProductos/ImportarProductos';
+import EditarProducto from './pages/Admin/EditarProducto/EditarProducto';
+import QuitarFondos from './pages/Admin/QuitarFondos/QuitarFondos';
 import ProtectedRoute from './components/ProtectedRoute';
 import UserRoute from './components/UserRoute';
 import PageTransition from './components/PageTransition';
@@ -43,6 +46,9 @@ function App() {
           <Route path="archivados"  element={<PageTransition><Archivados /></PageTransition>} />
           <Route path="publicidad"   element={<PageTransition><Publicidad /></PageTransition>} />
           <Route path="facturacion"  element={<PageTransition><Facturacion /></PageTransition>} />
+          <Route path="importar"     element={<PageTransition><ImportarProductos /></PageTransition>} />
+          <Route path="editar"       element={<PageTransition><EditarProducto /></PageTransition>} />
+          <Route path="quitar-fondos" element={<PageTransition><QuitarFondos /></PageTransition>} />
         </Route>
 
         <Route path="*" element={<PageTransition><NotFoundPage /></PageTransition>} />
