@@ -85,7 +85,7 @@ const findAccount = async (req, res) => {
 
     const user = await prisma.user.findUnique({
       where: { email },
-      select: { email: true, nombre: true, apellido: true },
+      select: { email: true, nombre: true, apellido: true, cedula: true, telefono: true, direccion: true },
     });
 
     if (!user) return res.status(404).json({ error: 'No existe ninguna cuenta con ese correo electrónico.' });

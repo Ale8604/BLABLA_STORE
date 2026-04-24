@@ -7,6 +7,7 @@ const authRoutes       = require('./routes/auth');
 const productRoutes    = require('./routes/products');
 const orderRoutes      = require('./routes/orders');
 const bannerRoutes     = require('./routes/banners');
+const proxyRoutes      = require('./routes/proxy');
 const sedesRoutes      = require('./routes/sedes');
 const vendedoresRoutes = require('./routes/vendedores');
 const comisionesRoutes = require('./routes/comisiones');
@@ -18,7 +19,7 @@ app.use(cors({
   origin: (origin, cb) => {
     if (!origin) return cb(null, true);
     const allowed =
-      origin === 'http://localhost:5173' ||
+      /^http:\/\/localhost:\d+$/.test(origin) ||
       /^https:\/\/blabla-store[a-z0-9-]*\.vercel\.app$/.test(origin);
     cb(null, allowed);
   },
@@ -39,6 +40,7 @@ app.use('/api/auth',       authLimiter, authRoutes);
 app.use('/api/products',   productRoutes);
 app.use('/api/orders',     orderRoutes);
 app.use('/api/banners',    bannerRoutes);
+app.use('/api/proxy-image', proxyRoutes);
 app.use('/api/sedes',      sedesRoutes);
 app.use('/api/vendedores', vendedoresRoutes);
 app.use('/api/comisiones', comisionesRoutes);

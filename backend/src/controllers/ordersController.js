@@ -34,11 +34,12 @@ const create = async (req, res) => {
             const pid     = Number(String(item.productId).split('-')[0]);
             const product = products.find(p => p.id === pid);
             return {
-              productId: pid,
-              name:      item.name  || product?.name  || '',
-              specs:     item.specs || '',
-              quantity:  item.quantity,
-              price:     item.price ?? product?.price ?? 0,
+              productId:    pid,
+              name:         item.name         || product?.name || '',
+              specs:        item.specs        || '',
+              colorVariant: item.colorVariant || '',
+              quantity:     item.quantity,
+              price:        item.price ?? product?.price ?? 0,
             };
           }),
         },
@@ -109,26 +110,46 @@ const updateStatus = async (req, res) => {
     if (!current) return res.status(404).json({ error: 'Pedido no encontrado' });
 
     const stockOps = [];
+    const needsStock =
+      (status === 'CONFIRMED' && current.status !== 'CONFIRMED') ||
+      (status === 'CANCELLED' && current.status === 'CONFIRMED');
 
-    if (status === 'CONFIRMED' && current.status !== 'CONFIRMED') {
-      for (const item of current.items) {
-        stockOps.push(
-          prisma.product.update({
-            where: { id: item.productId },
-            data:  { stock: { decrement: item.quantity } },
-          })
-        );
-      }
-    }
+    if (needsStock) {
+      const isConfirm = status === 'CONFIRMED';
+      const delta     = isConfirm ? -1 : 1;
 
-    if (status === 'CANCELLED' && current.status === 'CONFIRMED') {
+      // Group items by productId to batch-fetch products once
+      const productIds = [...new Set(current.items.map(i => i.productId))];
+      const dbProducts = await prisma.product.findMany({ where: { id: { in: productIds } } });
+
       for (const item of current.items) {
-        stockOps.push(
-          prisma.product.update({
-            where: { id: item.productId },
-            data:  { stock: { increment: item.quantity } },
-          })
-        );
+        const dbProduct = dbProducts.find(p => p.id === item.productId);
+        if (!dbProduct) continue;
+
+        const variants = Array.isArray(dbProduct.colorVariants) ? dbProduct.colorVariants : [];
+
+        if (item.colorVariant && variants.length > 0) {
+          // Per-color stock: update the matching variant's stock in JSON
+          const updatedVariants = variants.map(v =>
+            v.color === item.colorVariant
+              ? { ...v, stock: Math.max(0, (v.stock ?? 0) + delta * item.quantity) }
+              : v
+          );
+          stockOps.push(
+            prisma.product.update({
+              where: { id: item.productId },
+              data:  { colorVariants: updatedVariants },
+            })
+          );
+        } else {
+          // Global stock fallback (accessories, products without color variants)
+          stockOps.push(
+            prisma.product.update({
+              where: { id: item.productId },
+              data:  { stock: { [isConfirm ? 'decrement' : 'increment']: item.quantity } },
+            })
+          );
+        }
       }
     }
 

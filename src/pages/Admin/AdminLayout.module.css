@@ -6,7 +6,7 @@
   flex-direction: column;
   background-color: #0B0E14;
   position: relative;
-  overflow: hidden;
+  overflow-x: clip;
 }
 
 .wrapper::before {

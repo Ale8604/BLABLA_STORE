@@ -162,6 +162,26 @@
   color: rgba(255,255,255,0.4);
 }
 
+.variantStockInput {
+  width: 64px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.78rem;
+  padding: 4px 8px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.variantStockInput:focus {
+  border-color: rgba(91,124,250,0.5);
+}
+
+.variantStockInput::placeholder {
+  color: rgba(255,255,255,0.25);
+}
+
 /* ── Remove-bg button ── */
 .removeBgBtn {
   position: absolute;
