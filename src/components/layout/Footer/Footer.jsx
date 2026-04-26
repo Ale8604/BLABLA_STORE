@@ -10,7 +10,7 @@ const Footer = () => (
 
       <div className={styles.socials}>
         <a
-          href="https://instagram.com"
+          href="https://www.instagram.com/blablastore.ve?igsh=MWJ3aTAyMXUycmptbA=="
           target="_blank"
           rel="noopener noreferrer nofollow"
           className={styles.iconBtn}
