@@ -2,10 +2,8 @@ import { useState, useRef, useEffect } from 'react';
 import * as XLSX from 'xlsx';
 import { FaFileExcel, FaDownload, FaUpload, FaCheck, FaTimes, FaExclamationTriangle } from 'react-icons/fa';
 import { useProducts } from '../../../components/context/ProductsContext';
-import { api } from '../../../lib/api';
 import styles from './ImportarProductos.module.css';
 
-const CATEGORIAS  = ['Teléfonos', 'Accesorios', 'Repuestos'];
 const MAX_COLORS  = 4;
 const NOTIFY_DURATION = 20000;
 
@@ -13,6 +11,48 @@ const COLUMNS = [
   'nombre', 'precio', 'stock_global', 'codigo', 'categoria', 'marca', 'descripcion',
   ...Array.from({ length: MAX_COLORS }, (_, i) => [`color${i + 1}`, `imagen${i + 1}`, `stock${i + 1}`]).flat(),
 ];
+
+const FIELD_ALIASES = {
+  nombre:       ['nombre', 'name', 'producto', 'product', 'titulo', 'title', 'equipo', 'articulo'],
+  precio:       ['precio', 'price', 'costo', 'valor', 'cost', 'importe'],
+  stock_global: ['stock_global', 'stock', 'cantidad', 'qty', 'quantity', 'inventario', 'existencia'],
+  codigo:       ['codigo', 'code', 'sku', 'ref', 'referencia', 'id', 'cod'],
+  categoria:    ['categoria', 'category', 'tipo', 'cat', 'type'],
+  marca:        ['marca', 'brand', 'fabricante', 'manufacturer'],
+  descripcion:  ['descripcion', 'description', 'detalle', 'detail', 'desc', 'nota'],
+  color1:       ['color1', 'color_1', 'color 1', 'colour1', 'variante1'],
+  imagen1:      ['imagen1', 'image1', 'img1', 'foto1', 'link1', 'url1', 'photo1'],
+  stock1:       ['stock1', 'stock_1', 'stock 1', 'cantidad1', 'qty1'],
+  color2:       ['color2', 'color_2', 'color 2', 'colour2', 'variante2'],
+  imagen2:      ['imagen2', 'image2', 'img2', 'foto2', 'link2', 'url2', 'photo2'],
+  stock2:       ['stock2', 'stock_2', 'stock 2', 'cantidad2', 'qty2'],
+  color3:       ['color3', 'color_3', 'color 3', 'colour3', 'variante3'],
+  imagen3:      ['imagen3', 'image3', 'img3', 'foto3', 'link3', 'url3', 'photo3'],
+  stock3:       ['stock3', 'stock_3', 'stock 3', 'cantidad3', 'qty3'],
+  color4:       ['color4', 'color_4', 'color 4', 'colour4', 'variante4'],
+  imagen4:      ['imagen4', 'image4', 'img4', 'foto4', 'link4', 'url4', 'photo4'],
+  stock4:       ['stock4', 'stock_4', 'stock 4', 'cantidad4', 'qty4'],
+};
+
+const BASIC_FIELDS = [
+  { key: 'nombre',       label: 'Nombre',       required: true  },
+  { key: 'precio',       label: 'Precio',        required: true  },
+  { key: 'stock_global', label: 'Stock global',  required: false },
+  { key: 'codigo',       label: 'Código / SKU',  required: false },
+  { key: 'categoria',    label: 'Categoría',     required: false },
+  { key: 'marca',        label: 'Marca',         required: false },
+  { key: 'descripcion',  label: 'Descripción',   required: false },
+];
+
+const autoSuggestMapping = (headers) => {
+  const norm = (s) => s.toLowerCase().replace(/[\s_-]/g, '');
+  const result = {};
+  for (const [field, aliases] of Object.entries(FIELD_ALIASES)) {
+    const match = headers.find(h => aliases.some(alias => norm(h) === norm(alias)));
+    result[field] = match || '';
+  }
+  return result;
+};
 
 const buildTemplateWorkbook = () => {
   const header = COLUMNS;
@@ -32,7 +72,7 @@ const buildTemplateWorkbook = () => {
 };
 
 const parseRow = (row) => {
-  const get = (key) => row[key] ?? row[key.toLowerCase()] ?? '';
+  const get = (key) => (row[key] !== undefined && row[key] !== null) ? row[key] : '';
   const colors = Array.from({ length: MAX_COLORS }, (_, i) => {
     const color = String(get(`color${i + 1}`)).trim();
     const image = String(get(`imagen${i + 1}`)).trim();
@@ -56,15 +96,30 @@ const parseRow = (row) => {
   };
 };
 
+const applyMappingToRow = (raw, mapping) => {
+  const out = {};
+  for (const [field, col] of Object.entries(mapping)) {
+    out[field] = col ? (raw[col] ?? '') : '';
+  }
+  return out;
+};
+
 const ImportarProductos = () => {
   const { activeProducts, addProduct, updateProduct } = useProducts();
-  const [rows, setRows]         = useState([]);
-  const [fileName, setFileName] = useState('');
-  const [importing, setImporting] = useState(false);
-  const [result, setResult]     = useState(null);
-  const [timeLeft, setTimeLeft] = useState(0);
-  const timerRef  = useRef(null);
-  const inputRef  = useRef(null);
+  const [rows, setRows]               = useState([]);
+  const [fileName, setFileName]       = useState('');
+  const [importing, setImporting]     = useState(false);
+  const [result, setResult]           = useState(null);
+  const [timeLeft, setTimeLeft]       = useState(0);
+  const [dragging, setDragging]       = useState(false);
+  // mapping step
+  const [headers, setHeaders]         = useState([]);
+  const [rawData, setRawData]         = useState([]);
+  const [mapping, setMapping]         = useState({});
+  const [mappingStep, setMappingStep] = useState(false);
+
+  const timerRef = useRef(null);
+  const inputRef = useRef(null);
 
   useEffect(() => {
     if (!result) return;
@@ -77,19 +132,65 @@ const ImportarProductos = () => {
     return () => { clearTimeout(timerRef.current); clearInterval(interval); };
   }, [result]);
 
-  const handleFile = (e) => {
-    const file = e.target.files[0];
+  const processFile = (file) => {
     if (!file) return;
     setFileName(file.name);
     const reader = new FileReader();
     reader.onload = (evt) => {
-      const wb   = XLSX.read(evt.target.result, { type: 'array' });
-      const ws   = wb.Sheets[wb.SheetNames[0]];
-      const data = XLSX.utils.sheet_to_json(ws, { defval: '' });
-      setRows(data.map(parseRow).filter(r => r.name));
+      const wb  = XLSX.read(evt.target.result, { type: 'array' });
+      const ws  = wb.Sheets[wb.SheetNames[0]];
+      // Read as raw arrays to detect the real header row (skips title rows at top)
+      const raw = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+
+      // First row with 2+ non-empty cells is the header row
+      let headerIdx = 0;
+      for (let i = 0; i < raw.length; i++) {
+        if (raw[i].filter(c => c !== '' && c !== null && c !== undefined).length >= 2) {
+          headerIdx = i;
+          break;
+        }
+      }
+
+      const hdrs = raw[headerIdx].map((h, i) =>
+        h !== '' && h !== null ? String(h).trim() : `Columna_${i + 1}`
+      );
+      const dataRows = raw.slice(headerIdx + 1).filter(row =>
+        row.some(c => c !== '' && c !== null && c !== undefined)
+      );
+      const data = dataRows.map(row => {
+        const obj = {};
+        hdrs.forEach((h, i) => { obj[h] = row[i] ?? ''; });
+        return obj;
+      });
+
+      if (!data.length) return;
+      setHeaders(hdrs);
+      setRawData(data);
+      setMapping(autoSuggestMapping(hdrs));
+      setMappingStep(true);
+      setRows([]);
       setResult(null);
     };
     reader.readAsArrayBuffer(file);
+  };
+
+  const handleFile     = (e) => processFile(e.target.files[0]);
+  const handleDragOver  = (e) => { e.preventDefault(); setDragging(true); };
+  const handleDragLeave = () => setDragging(false);
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setDragging(false);
+    const file = e.dataTransfer.files[0];
+    if (file) processFile(file);
+  };
+
+  const handleApplyMapping = () => {
+    const mapped = rawData
+      .map(raw => applyMappingToRow(raw, mapping))
+      .map(parseRow)
+      .filter(r => r.name);
+    setRows(mapped);
+    setMappingStep(false);
   };
 
   const handleDownloadTemplate = () => {
@@ -108,7 +209,6 @@ const ImportarProductos = () => {
       );
 
       if (!existing) {
-        // Nuevo producto
         try {
           const payload = {
             ...row,
@@ -131,7 +231,6 @@ const ImportarProductos = () => {
         continue;
       }
 
-      // Producto existente — verificar colores
       const existingVariants = Array.isArray(existing.colorVariants) ? existing.colorVariants : [];
       const newColors = row.colorVariants.filter(
         v => !existingVariants.some(ev => ev.color.toLowerCase() === v.color.toLowerCase())
@@ -141,13 +240,11 @@ const ImportarProductos = () => {
         skipped.push({ name: row.name, reason: 'Todos los colores ya existen' });
         continue;
       }
-
       if (newColors.length === 0 && row.colorVariants.length === 0) {
         skipped.push({ name: row.name, reason: 'Ya existe sin variantes de color' });
         continue;
       }
 
-      // Agregar solo los colores nuevos
       try {
         const mergedVariants = [...existingVariants, ...newColors];
         const newStock = mergedVariants.reduce((s, v) => s + (v.stock ?? 0), 0);
@@ -165,9 +262,14 @@ const ImportarProductos = () => {
     setImporting(false);
     setResult({ created, updated, skipped });
     setRows([]);
+    setRawData([]);
+    setHeaders([]);
+    setMapping({});
     setFileName('');
     if (inputRef.current) inputRef.current.value = '';
   };
+
+  const requiredMapped = BASIC_FIELDS.filter(f => f.required).every(f => mapping[f.key]);
 
   return (
     <div className={styles.wrapper}>
@@ -177,9 +279,9 @@ const ImportarProductos = () => {
       <div className={styles.card}>
         <h3 className={styles.cardTitle}>¿Cómo funciona?</h3>
         <ol className={styles.steps}>
-          <li>Descargá la plantilla Excel y completá los datos.</li>
+          <li>Subí cualquier Excel con tus productos — el sistema detecta las columnas automáticamente.</li>
+          <li>Mapeá cada columna de tu archivo al campo correspondiente.</li>
           <li>Para las imágenes subí cada foto a <strong>postimages.org</strong> y copiá el link directo.</li>
-          <li>Cada producto puede tener hasta 4 colores con su imagen y stock individual.</li>
           <li>Si el producto ya existe, solo se agregan los colores nuevos que no estén en la tienda.</li>
         </ol>
         <button className={styles.templateBtn} onClick={handleDownloadTemplate}>
@@ -190,7 +292,12 @@ const ImportarProductos = () => {
       {/* Upload */}
       <div className={styles.card}>
         <h3 className={styles.cardTitle}>Subir archivo Excel</h3>
-        <label className={styles.uploadZone}>
+        <label
+          className={`${styles.uploadZone} ${dragging ? styles.uploadZoneDragging : ''}`}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+        >
           <input
             ref={inputRef}
             type="file"
@@ -206,6 +313,76 @@ const ImportarProductos = () => {
           }
         </label>
       </div>
+
+      {/* Mapeo de columnas */}
+      {mappingStep && (
+        <div className={styles.card}>
+          <h3 className={styles.cardTitle}>
+            Mapear columnas — {rawData.length} fila{rawData.length !== 1 ? 's' : ''} detectada{rawData.length !== 1 ? 's' : ''}
+          </h3>
+          <p className={styles.mappingHint}>
+            Asigná cada campo de la tienda a la columna correspondiente de tu Excel.
+            Los campos con <span className={styles.required}>*</span> son obligatorios.
+          </p>
+
+          <div className={styles.mappingSection}>
+            <p className={styles.mappingSectionTitle}>Campos básicos</p>
+            <div className={styles.mappingGrid}>
+              {BASIC_FIELDS.map(f => (
+                <div key={f.key} className={styles.mappingRow}>
+                  <label className={styles.mappingLabel}>
+                    {f.label}{f.required && <span className={styles.required}> *</span>}
+                  </label>
+                  <select
+                    className={`${styles.mappingSelect} ${f.required && !mapping[f.key] ? styles.mappingSelectError : ''}`}
+                    value={mapping[f.key] || ''}
+                    onChange={e => setMapping(m => ({ ...m, [f.key]: e.target.value }))}
+                  >
+                    <option value="">— Sin asignar —</option>
+                    {headers.map(h => <option key={h} value={h}>{h}</option>)}
+                  </select>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className={styles.mappingSection}>
+            <p className={styles.mappingSectionTitle}>Colores y variantes (opcional)</p>
+            <div className={styles.colorMappingGrid}>
+              {Array.from({ length: MAX_COLORS }, (_, i) => (
+                <div key={i} className={styles.colorMappingGroup}>
+                  <p className={styles.colorGroupLabel}>Color {i + 1}</p>
+                  {['color', 'imagen', 'stock'].map(sub => {
+                    const key = `${sub}${i + 1}`;
+                    const labels = { color: 'Color', imagen: 'Imagen URL', stock: 'Stock' };
+                    return (
+                      <div key={key} className={styles.mappingRow}>
+                        <label className={styles.mappingLabel}>{labels[sub]}</label>
+                        <select
+                          className={styles.mappingSelect}
+                          value={mapping[key] || ''}
+                          onChange={e => setMapping(m => ({ ...m, [key]: e.target.value }))}
+                        >
+                          <option value="">— Sin asignar —</option>
+                          {headers.map(h => <option key={h} value={h}>{h}</option>)}
+                        </select>
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <button
+            className={styles.importBtn}
+            onClick={handleApplyMapping}
+            disabled={!requiredMapped}
+          >
+            <FaCheck size={13} /> Ver vista previa
+          </button>
+        </div>
+      )}
 
       {/* Preview */}
       {rows.length > 0 && (
@@ -272,16 +449,21 @@ const ImportarProductos = () => {
             </table>
           </div>
 
-          <button
-            className={styles.importBtn}
-            onClick={handleImport}
-            disabled={importing}
-          >
-            {importing
-              ? 'Importando…'
-              : <><FaUpload size={14} /> Importar {rows.length} producto{rows.length !== 1 ? 's' : ''}</>
-            }
-          </button>
+          <div className={styles.previewActions}>
+            <button className={styles.backBtn} onClick={() => { setRows([]); setMappingStep(true); }}>
+              Volver a mapear
+            </button>
+            <button
+              className={styles.importBtn}
+              onClick={handleImport}
+              disabled={importing}
+            >
+              {importing
+                ? 'Importando…'
+                : <><FaUpload size={14} /> Importar {rows.length} producto{rows.length !== 1 ? 's' : ''}</>
+              }
+            </button>
+          </div>
         </div>
       )}
 

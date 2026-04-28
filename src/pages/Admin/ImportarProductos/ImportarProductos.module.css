@@ -86,6 +86,12 @@
   background: rgba(91,124,250,0.04);
 }
 
+.uploadZoneDragging {
+  border-color: #5b7cfa;
+  background: rgba(91,124,250,0.1);
+  box-shadow: 0 0 0 3px rgba(91,124,250,0.15);
+}
+
 .fileInput { display: none; }
 
 .excelIcon { color: #22c55e; }
@@ -104,6 +110,113 @@
 .uploadHint {
   font-size: 0.76rem;
   color: rgba(255,255,255,0.25);
+}
+
+/* ── Mapping step ── */
+.mappingHint {
+  font-size: 0.84rem;
+  color: rgba(255,255,255,0.45);
+  margin: 0;
+}
+
+.required { color: #f87171; }
+
+.mappingSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mappingSectionTitle {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+  margin: 0;
+}
+
+.mappingGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.mappingRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mappingLabel {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.55);
+  font-weight: 600;
+}
+
+.mappingSelect {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  color: rgba(255,255,255,0.85);
+  font-size: 0.84rem;
+  padding: 7px 10px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.mappingSelect:focus { border-color: rgba(91,124,250,0.5); }
+
+.mappingSelectError {
+  border-color: rgba(248,113,113,0.4);
+}
+
+.colorMappingGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.colorMappingGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.colorGroupLabel {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.35);
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.previewActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.backBtn {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  color: rgba(255,255,255,0.5);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.backBtn:hover {
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.8);
 }
 
 /* ── Preview table ── */
@@ -309,4 +422,8 @@
   .uploadZone { padding: 28px 16px; }
   .importBtn { width: 100%; justify-content: center; }
   .templateBtn { width: 100%; justify-content: center; }
+  .mappingGrid { grid-template-columns: 1fr; }
+  .colorMappingGrid { grid-template-columns: 1fr 1fr; }
+  .previewActions { flex-direction: column; }
+  .backBtn { width: 100%; text-align: center; }
 }
