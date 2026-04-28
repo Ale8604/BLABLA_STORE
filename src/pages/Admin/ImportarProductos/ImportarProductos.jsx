@@ -374,13 +374,28 @@ const ImportarProductos = () => {
             </div>
           </div>
 
-          <button
-            className={styles.importBtn}
-            onClick={handleApplyMapping}
-            disabled={!requiredMapped}
-          >
-            <FaCheck size={13} /> Ver vista previa
-          </button>
+          <div className={styles.previewActions}>
+            <button
+              className={styles.backBtn}
+              onClick={() => {
+                setMappingStep(false);
+                setHeaders([]);
+                setRawData([]);
+                setMapping({});
+                setFileName('');
+                if (inputRef.current) inputRef.current.value = '';
+              }}
+            >
+              <FaTimes size={13} /> Cancelar
+            </button>
+            <button
+              className={styles.importBtn}
+              onClick={handleApplyMapping}
+              disabled={!requiredMapped}
+            >
+              <FaCheck size={13} /> Ver vista previa
+            </button>
+          </div>
         </div>
       )}
 
