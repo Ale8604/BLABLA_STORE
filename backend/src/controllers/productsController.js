@@ -52,7 +52,7 @@ const create = async (req, res) => {
   try {
     const {
       name, price, brand, condition, category, code, stock,
-      description, specs, image, active, entrada, meses,
+      description, specs, image, active, archived, entrada, meses,
       colorVariants, ram, storage, draft,
     } = req.body;
 
@@ -87,8 +87,9 @@ const create = async (req, res) => {
         entrada: ent,
         meses:   mes,
         monthly,
-        active:  isDraft ? false : (active ?? true),
-        draft:   isDraft,
+        active:   isDraft ? false : (active ?? true),
+        archived: isDraft ? false : (archived ?? false),
+        draft:    isDraft,
       },
     });
 
