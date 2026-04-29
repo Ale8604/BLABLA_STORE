@@ -45,8 +45,6 @@ const productToForm = (p) => ({
   brand:        p.brand       || 'Apple (iPhone)',
   active:       p.active      ?? true,
   condition:    p.condition   || 'Nuevo',
-  entrada:      p.entrada     ?? 30,
-  meses:        p.meses       ?? 24,
   ram:          p.ram         || [],
   storage:      p.storage     || [],
   ramInput:     '',
@@ -205,9 +203,6 @@ const EditarProducto = () => {
         colorVariants,
         ram:         form.ram,
         storage:     form.storage,
-        entrada:     Number(form.entrada),
-        meses:       Number(form.meses),
-        monthly:     Number(((Number(form.price) * (1 - Number(form.entrada) / 100)) / Number(form.meses)).toFixed(2)),
       };
 
       await updateProduct(selected.id, payload);
@@ -378,21 +373,7 @@ const EditarProducto = () => {
                   />
                 </div>
               )}
-              <div className={styles.fieldGroup}>
-                <label className={styles.label}>Entrada (%)</label>
-                <input className={styles.input} type="number" min="0" max="100" value={form.entrada} onChange={e => set('entrada', e.target.value)} />
-              </div>
-              <div className={styles.fieldGroup}>
-                <label className={styles.label}>Meses de Cuota</label>
-                <input className={styles.input} type="number" min="1" value={form.meses} onChange={e => set('meses', e.target.value)} />
-              </div>
             </div>
-
-            {form.price && form.entrada !== '' && form.meses && (
-              <p className={styles.monthlyPreview}>
-                Cuota: <strong>${((Number(form.price) * (1 - Number(form.entrada) / 100)) / Number(form.meses)).toFixed(2)}</strong> × {form.meses} meses
-              </p>
-            )}
 
             <div className={styles.textareaRow}>
               <div className={styles.fieldGroup} style={{ flex: 1 }}>

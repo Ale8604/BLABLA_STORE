@@ -29,7 +29,6 @@ const emptyForm = {
   description: '', specs: '',
   category: 'Teléfonos', brand: 'Apple (iPhone)',
   active: true, condition: 'Nuevo',
-  entrada: 30, meses: 24,
   ram: [], storage: [],
   ramInput: '', storageInput: '',
   images: Array(SLOTS).fill(null),
@@ -147,8 +146,6 @@ const CrearProducto = () => {
         brand:       found.brand    || 'Apple (iPhone)',
         active:      found.draft ? true : found.active,
         condition:   found.condition,
-        entrada:     found.entrada ?? 30,
-        meses:       found.meses   ?? 24,
         ram:         found.ram     || [],
         storage:     found.storage || [],
         ramInput:    '',
@@ -194,9 +191,6 @@ const CrearProducto = () => {
           condition:   f.condition   || 'Nuevo',
           active:      false,
           draft:       true,
-          entrada:     Number(f.entrada) || 30,
-          meses:       Number(f.meses)   || 24,
-          monthly:     0,
           ram:         f.ram     || [],
           storage:     f.storage || [],
         }),
@@ -261,9 +255,6 @@ const CrearProducto = () => {
         colorVariants,
         ram:     form.ram,
         storage: form.storage,
-        entrada: Number(form.entrada),
-        meses:   Number(form.meses),
-        monthly: Number(((Number(form.price) * (1 - Number(form.entrada) / 100)) / Number(form.meses)).toFixed(2)),
         draft:   false,
       };
 
@@ -312,9 +303,6 @@ const CrearProducto = () => {
         colorVariants,
         ram:         form.ram,
         storage:     form.storage,
-        entrada:     Number(form.entrada),
-        meses:       Number(form.meses),
-        monthly:     0,
         draft:       true,
       };
 
@@ -600,24 +588,7 @@ const CrearProducto = () => {
               />
             </div>
           )}
-          <div className={styles.fieldGroup}>
-            <label className={styles.label}>Entrada (%)</label>
-            <input className={styles.input} type="number" min="0" max="100" placeholder="30" value={form.entrada} onChange={e => set('entrada', e.target.value)} />
-          </div>
-          <div className={styles.fieldGroup}>
-            <label className={styles.label}>Meses de Cuota</label>
-            <input className={styles.input} type="number" min="1" placeholder="24" value={form.meses} onChange={e => set('meses', e.target.value)} />
-          </div>
         </div>
-
-        {form.price && form.entrada !== '' && form.meses && (
-          <p className={styles.monthlyPreview}>
-            Cuota mensual: <strong>
-              ${((Number(form.price) * (1 - Number(form.entrada) / 100)) / Number(form.meses)).toFixed(2)}
-            </strong> × {form.meses} meses
-            {Number(form.entrada) > 0 && ` (entrada del ${form.entrada}%: $${(Number(form.price) * Number(form.entrada) / 100).toFixed(2)})`}
-          </p>
-        )}
 
         <div className={styles.textareaRow}>
           <div className={styles.fieldGroup} style={{ flex: 1 }}>

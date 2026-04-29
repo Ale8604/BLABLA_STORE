@@ -219,11 +219,6 @@ const ProductDetail = () => {
               {offerActive && (
                 <span className={styles.priceOriginal}>${product.price.toLocaleString()}</span>
               )}
-              {product.monthly > 0 && (
-                <span className={styles.monthly}>
-                  Desde ${product.monthly} / mes × {product.meses ?? 24} meses
-                </span>
-              )}
             </div>
 
             <div className={styles.divider} />

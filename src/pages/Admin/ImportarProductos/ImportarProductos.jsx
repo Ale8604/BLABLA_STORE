@@ -212,9 +212,6 @@ const ImportarProductos = () => {
         try {
           const payload = {
             ...row,
-            monthly:   0,
-            entrada:   30,
-            meses:     24,
             ram:       [],
             storage:   [],
             active:    false,

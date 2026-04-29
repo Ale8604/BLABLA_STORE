@@ -12,7 +12,7 @@ const getOfferActive = (discountPercent, offerStart, offerEnd) => {
   return true;
 };
 
-const ProductCard = ({ id, name, price, monthly, meses, colorVariants, image, discountPercent, offerStart, offerEnd }) => {
+const ProductCard = ({ id, name, price, colorVariants, image, discountPercent, offerStart, offerEnd }) => {
   const navigate = useNavigate();
   const [hovered, setHovered] = useState(false);
 
@@ -71,8 +71,6 @@ const ProductCard = ({ id, name, price, monthly, meses, colorVariants, image, di
           <p className={styles.price}>${displayPrice.toLocaleString()}</p>
           {offerActive && <p className={styles.priceOriginal}>${price.toLocaleString()}</p>}
         </div>
-        <p className={styles.installments}>Cuotas desde {monthly}$ por mes por {meses ?? 24} meses</p>
-
         <motion.div
           className={styles.detailRow}
           animate={{ gap: hovered ? '10px' : '6px' }}
