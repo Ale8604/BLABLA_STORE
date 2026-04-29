@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   FaShoppingCart, FaUserCircle, FaSignInAlt, FaUserPlus,
   FaSignOutAlt, FaCheckCircle, FaSearch, FaTimes, FaBars,
+  FaUserShield,
 } from 'react-icons/fa';
 import logo from '../../../assets/logo.png';
 import styles from './navbar.module.css';
@@ -18,7 +19,7 @@ const CATEGORIAS = [
 
 const Navbar = () => {
   const { cartCount, toggleCart } = useCart();
-  const { user, logout }          = useAuth();
+  const { user, logout, isAdmin }  = useAuth();
   const navigate                  = useNavigate();
   const [open, setOpen]           = useState(false);
   const [catOpen, setCatOpen]     = useState(false);
@@ -260,6 +261,11 @@ const Navbar = () => {
                       </div>
                     </div>
                     <div className={styles.dropdownDivider} />
+                    {isAdmin && (
+                      <Link to="/admin" className={styles.dropdownItemAdmin} onClick={() => setOpen(false)}>
+                        <FaUserShield size={13} /> Panel Admin
+                      </Link>
+                    )}
                     <Link to="/perfil" className={styles.dropdownItem} onClick={() => setOpen(false)}>
                       <FaUserCircle size={13} /> Mi perfil
                     </Link>

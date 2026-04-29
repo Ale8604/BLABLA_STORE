@@ -221,6 +221,28 @@
   color: #fff;
 }
 
+.dropdownItemAdmin {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: none;
+  background: rgba(91,124,250,0.12);
+  color: #5b7cfa;
+  font-size: 0.87rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  margin-bottom: 2px;
+}
+.dropdownItemAdmin:hover {
+  background: rgba(91,124,250,0.22);
+  color: #fff;
+}
+
 /* ── Search form ── */
 .searchForm {
   flex: 1;
