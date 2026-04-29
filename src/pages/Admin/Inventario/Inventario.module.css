@@ -61,6 +61,10 @@
   color: rgba(255,255,255,0.5);
   font-size: 0.82rem;
   letter-spacing: 0.5px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #0d1017;
 }
 
 .table td {
@@ -247,7 +251,8 @@
 
 .tableContainer {
   width: 100%;
-  overflow-x: auto;
+  overflow: auto;
+  max-height: 65vh;
   -webkit-overflow-scrolling: touch;
   border-radius: 10px;
 }
