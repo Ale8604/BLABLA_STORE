@@ -5,13 +5,10 @@ import { FaSearch, FaEyeSlash, FaEye, FaEdit } from 'react-icons/fa';
 import { useProducts } from '../../../components/context/ProductsContext';
 import styles from './Archivados.module.css';
 
-const PAGE_SIZE = 30;
-
 const Archivados = () => {
   const { archivedProducts, archiveProduct } = useProducts();
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
-  const [page, setPage]     = useState(1);
   const [toast, setToast]   = useState(null);
 
   const filtered = archivedProducts.filter(p =>
@@ -20,10 +17,7 @@ const Archivados = () => {
     p.category?.toLowerCase().includes(search.toLowerCase())
   );
 
-  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
-  const visible    = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-
-  const handleSearch = (val) => { setSearch(val); setPage(1); };
+  const handleSearch = (val) => setSearch(val);
 
   const handleActivate = (product) => {
     archiveProduct(product.id);
@@ -64,7 +58,6 @@ const Archivados = () => {
           </p>
         </div>
       ) : (
-        <>
           <div className={styles.tableWrap}>
             <table className={styles.table}>
               <thead>
@@ -77,7 +70,7 @@ const Archivados = () => {
                 </tr>
               </thead>
               <tbody>
-                {visible.map(p => (
+                {filtered.map(p => (
                   <tr key={p.id}>
                     <td className={styles.nameCell}>
                       <img
@@ -114,30 +107,6 @@ const Archivados = () => {
               </tbody>
             </table>
           </div>
-
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className={styles.pagination}>
-              <button
-                className={styles.pageBtn}
-                disabled={page === 1}
-                onClick={() => setPage(p => p - 1)}
-              >
-                ‹ Anterior
-              </button>
-              <span className={styles.pageInfo}>
-                Página {page} de {totalPages}
-              </span>
-              <button
-                className={styles.pageBtn}
-                disabled={page === totalPages}
-                onClick={() => setPage(p => p + 1)}
-              >
-                Siguiente ›
-              </button>
-            </div>
-          )}
-        </>
       )}
 
       {/* Toast */}

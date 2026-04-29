@@ -61,8 +61,14 @@
 .tableWrap {
   border: 1px solid rgba(255,255,255,0.07);
   border-radius: 14px;
-  overflow: hidden;
-  overflow-x: auto;
+  overflow: auto;
+  max-height: 65vh;
+}
+
+.table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
 .table {
@@ -162,35 +168,6 @@
 }
 .activateBtn:hover { background: rgba(34,197,94,0.22); }
 
-/* ── Pagination ── */
-.pagination {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-}
-
-.pageBtn {
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 8px;
-  color: rgba(255,255,255,0.6);
-  font-size: 0.84rem;
-  font-weight: 600;
-  padding: 8px 16px;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-}
-.pageBtn:hover:not(:disabled) {
-  background: rgba(255,255,255,0.1);
-  color: #fff;
-}
-.pageBtn:disabled { opacity: 0.3; cursor: not-allowed; }
-
-.pageInfo {
-  font-size: 0.82rem;
-  color: rgba(255,255,255,0.35);
-}
 
 /* ── Empty ── */
 .emptyWrapper {
