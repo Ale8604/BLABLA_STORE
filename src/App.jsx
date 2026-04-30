@@ -24,6 +24,7 @@ const Facturacion       = lazy(() => import('./pages/Admin/Facturacion/Facturaci
 const ImportarProductos = lazy(() => import('./pages/Admin/ImportarProductos/ImportarProductos'));
 const EditarProducto    = lazy(() => import('./pages/Admin/EditarProducto/EditarProducto'));
 const QuitarFondos      = lazy(() => import('./pages/Admin/QuitarFondos/QuitarFondos'));
+const Fotos             = lazy(() => import('./pages/Admin/Fotos/Fotos'));
 
 function App() {
   const location = useLocation();
@@ -51,6 +52,7 @@ function App() {
           <Route path="importar"     element={<Suspense fallback={null}><PageTransition><ImportarProductos /></PageTransition></Suspense>} />
           <Route path="editar"       element={<Suspense fallback={null}><PageTransition><EditarProducto /></PageTransition></Suspense>} />
           <Route path="quitar-fondos" element={<Suspense fallback={null}><PageTransition><QuitarFondos /></PageTransition></Suspense>} />
+          <Route path="fotos"        element={<Suspense fallback={null}><PageTransition><Fotos /></PageTransition></Suspense>} />
         </Route>
 
         <Route path="*" element={<PageTransition><NotFoundPage /></PageTransition>} />

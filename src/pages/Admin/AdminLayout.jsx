@@ -1,7 +1,7 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaInbox, FaPlusCircle, FaBook, FaFileInvoiceDollar, FaBullhorn, FaUserCircle, FaSignOutAlt, FaCheckCircle, FaTachometerAlt, FaBars, FaTimes, FaFileExcel, FaEdit, FaMagic } from 'react-icons/fa';
+import { FaInbox, FaPlusCircle, FaBook, FaFileInvoiceDollar, FaBullhorn, FaUserCircle, FaSignOutAlt, FaCheckCircle, FaTachometerAlt, FaBars, FaTimes, FaFileExcel, FaEdit, FaMagic, FaCamera } from 'react-icons/fa';
 import logo from '../../assets/logo.png';
 import styles from './AdminLayout.module.css';
 import { useAuth } from '../../components/context/AuthContext';
@@ -15,6 +15,7 @@ const NAV_ITEMS = [
   { to: '/admin/facturacion', icon: <FaFileInvoiceDollar size={18}/>, label: 'Facturación' },
   { to: '/admin/editar',       icon: <FaEdit size={18} />,       label: 'Editar Producto' },
   { to: '/admin/quitar-fondos', icon: <FaMagic size={18} />,      label: 'Quitar Fondos'  },
+  { to: '/admin/fotos',      icon: <FaCamera size={18} />,        label: 'Fotos' },
   { to: '/admin/importar',   icon: <FaFileExcel size={18} />,     label: 'Importar Excel' },
 ];
 
