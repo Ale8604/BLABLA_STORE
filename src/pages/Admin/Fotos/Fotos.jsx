@@ -1,6 +1,6 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { FaSearch, FaCloudUploadAlt, FaCheckCircle, FaImage, FaSpinner } from 'react-icons/fa';
+import { FaSearch, FaCloudUploadAlt, FaCheckCircle, FaImage, FaSpinner, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { useProducts } from '../../../components/context/ProductsContext';
 import { uploadImage } from '../../../lib/supabase';
 import styles from './Fotos.module.css';
@@ -140,6 +140,8 @@ const ProductCard = ({ product, uploading, onUpload, done }) => {
   );
 };
 
+const PAGE_SIZE = 10;
+
 /* ── Página principal ── */
 const Fotos = () => {
   const { products, updateProduct } = useProducts();
@@ -147,6 +149,7 @@ const Fotos = () => {
   const [showAll,   setShowAll]   = useState(false);
   const [uploading, setUploading] = useState(new Set());
   const [toast,     setToast]     = useState(null);
+  const [page,      setPage]      = useState(1);
 
   const allReal = products.filter(p => !p.draft);
 
@@ -159,7 +162,13 @@ const Fotos = () => {
     return matchSearch && matchFilter;
   });
 
+  const totalPages  = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const safePage    = Math.min(page, totalPages);
+  const paginated   = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
   const pendingCount = allReal.filter(needsPhoto).length;
+
+  // Reset to page 1 when search/filter changes
+  useEffect(() => { setPage(1); }, [search, showAll]);
 
   const handleUpload = useCallback(async (product, slotIndex, slotType, publicUrl) => {
     const key = `${product.id}-${slotIndex}`;
@@ -229,19 +238,50 @@ const Fotos = () => {
           </p>
         </div>
       ) : (
-        <motion.div className={styles.grid} layout>
-          <AnimatePresence mode="popLayout">
-            {filtered.map(p => (
-              <ProductCard
-                key={p.id}
-                product={p}
-                uploading={uploading}
-                onUpload={handleUpload}
-                done={isDone(p)}
-              />
+        <>
+          <motion.div className={styles.grid} layout>
+            <AnimatePresence mode="popLayout">
+              {paginated.map(p => (
+                <ProductCard
+                  key={p.id}
+                  product={p}
+                  uploading={uploading}
+                  onUpload={handleUpload}
+                  done={isDone(p)}
+                />
+              ))}
+            </AnimatePresence>
+          </motion.div>
+
+          {/* Paginación */}
+          <div className={styles.pagination}>
+            <button
+              className={styles.pageBtn}
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+              disabled={safePage === 1}
+            >
+              <FaChevronLeft size={12} />
+            </button>
+
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
+              <button
+                key={n}
+                className={`${styles.pageBtn} ${n === safePage ? styles.pageBtnActive : ''}`}
+                onClick={() => setPage(n)}
+              >
+                {n}
+              </button>
             ))}
-          </AnimatePresence>
-        </motion.div>
+
+            <button
+              className={styles.pageBtn}
+              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+              disabled={safePage === totalPages}
+            >
+              <FaChevronRight size={12} />
+            </button>
+          </div>
+        </>
       )}
 
       {/* Toast */}
