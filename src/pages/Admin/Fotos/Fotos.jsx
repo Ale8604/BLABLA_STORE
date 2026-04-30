@@ -140,7 +140,7 @@ const ProductCard = ({ product, uploading, onUpload, done }) => {
   );
 };
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 9;
 
 /* ── Página principal ── */
 const Fotos = () => {
